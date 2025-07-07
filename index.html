@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Wallet Balance</title>
+  <title>Wallet</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -68,7 +68,7 @@
   </style>
 </head>
 <body>
-  <h1>Wallet Balance</h1>
+  <h1>Wallet</h1>
 
   <div class="wallets-container">
     <div class="wallet">
@@ -84,8 +84,11 @@
     </div>
   </div>
 
-  <!-- Include canvas-confetti from CDN -->
+  <!-- Confetti library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Sparkle sound -->
+  <audio id="sparkleSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_8e8584eb7b.mp3?filename=game-notification-199027.mp3" preload="auto"></audio>
 
   <script>
     const BTC_ADDRESS = "bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep"; 
@@ -108,9 +111,10 @@
       }
       requestAnimationFrame(step);
       
-      // Trigger confetti if desired
+      // Play confetti + sound if balance increased
       if (triggerConfetti && end > start) {
         launchConfetti();
+        playSparkle();
       }
     }
 
@@ -122,8 +126,13 @@
       });
     }
 
+    function playSparkle() {
+      const sound = document.getElementById("sparkleSound");
+      sound.currentTime = 0;
+      sound.play();
+    }
+
     async function loadBalances() {
-      // BTC
       try {
         const btcRes = await fetch(`https://blockchain.info/q/addressbalance/${BTC_ADDRESS}?confirmations=6`);
         const sats = await btcRes.text();
@@ -134,7 +143,6 @@
         document.getElementById("btcBalance").textContent = "Error";
       }
 
-      // ETH
       try {
         const ethRes = await fetch(`https://api.etherscan.io/api?module=account&action=balance&address=${ETH_ADDRESS}&tag=latest&apikey=${ETHERSCAN_API_KEY}`);
         const data = await ethRes.json();
@@ -152,11 +160,11 @@
 
     function demoIncrease(type) {
       if (type === "BTC") {
-        const newBTC = currentBTC + Math.random() * 0.001; 
+        const newBTC = currentBTC + Math.random() * 0.001;
         animateValue(document.getElementById("btcBalance"), currentBTC, newBTC, 1000, " BTC", true);
         currentBTC = newBTC;
       } else if (type === "ETH") {
-        const newETH = currentETH + Math.random() * 0.01; 
+        const newETH = currentETH + Math.random() * 0.01;
         animateValue(document.getElementById("ethBalance"), currentETH, newETH, 1000, " ETH", true);
         currentETH = newETH;
       }
