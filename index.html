@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Wallet Balances</title>
+  <title>Wallet Balance</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -68,7 +68,7 @@
   </style>
 </head>
 <body>
-  <h1>Wallet Balances</h1>
+  <h1>Wallet Balance</h1>
 
   <div class="wallets-container">
     <div class="wallet">
@@ -84,6 +84,9 @@
     </div>
   </div>
 
+  <!-- Include canvas-confetti from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <script>
     const BTC_ADDRESS = "bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep"; 
     const ETH_ADDRESS = "your_eth_address_here"; 
@@ -92,7 +95,7 @@
     let currentBTC = 0;
     let currentETH = 0;
 
-    function animateValue(element, start, end, duration, suffix) {
+    function animateValue(element, start, end, duration, suffix, triggerConfetti = false) {
       let startTime = null;
       function step(timestamp) {
         if (!startTime) startTime = timestamp;
@@ -104,6 +107,19 @@
         }
       }
       requestAnimationFrame(step);
+      
+      // Trigger confetti if desired
+      if (triggerConfetti && end > start) {
+        launchConfetti();
+      }
+    }
+
+    function launchConfetti() {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
     }
 
     async function loadBalances() {
@@ -112,7 +128,7 @@
         const btcRes = await fetch(`https://blockchain.info/q/addressbalance/${BTC_ADDRESS}?confirmations=6`);
         const sats = await btcRes.text();
         const btc = parseInt(sats) / 1e8;
-        animateValue(document.getElementById("btcBalance"), currentBTC, btc, 1000, " BTC");
+        animateValue(document.getElementById("btcBalance"), currentBTC, btc, 1000, " BTC", btc > currentBTC);
         currentBTC = btc;
       } catch {
         document.getElementById("btcBalance").textContent = "Error";
@@ -124,7 +140,7 @@
         const data = await ethRes.json();
         if (data.status === "1") {
           const eth = parseInt(data.result) / 1e18;
-          animateValue(document.getElementById("ethBalance"), currentETH, eth, 1000, " ETH");
+          animateValue(document.getElementById("ethBalance"), currentETH, eth, 1000, " ETH", eth > currentETH);
           currentETH = eth;
         } else {
           document.getElementById("ethBalance").textContent = "Error";
@@ -136,18 +152,18 @@
 
     function demoIncrease(type) {
       if (type === "BTC") {
-        const newBTC = currentBTC + Math.random() * 0.001; // small increase
-        animateValue(document.getElementById("btcBalance"), currentBTC, newBTC, 1000, " BTC");
+        const newBTC = currentBTC + Math.random() * 0.001; 
+        animateValue(document.getElementById("btcBalance"), currentBTC, newBTC, 1000, " BTC", true);
         currentBTC = newBTC;
       } else if (type === "ETH") {
-        const newETH = currentETH + Math.random() * 0.01; // small increase
-        animateValue(document.getElementById("ethBalance"), currentETH, newETH, 1000, " ETH");
+        const newETH = currentETH + Math.random() * 0.01; 
+        animateValue(document.getElementById("ethBalance"), currentETH, newETH, 1000, " ETH", true);
         currentETH = newETH;
       }
     }
 
     loadBalances();
-    setInterval(loadBalances, 30000); // refresh every 30 sec
+    setInterval(loadBalances, 30000);
   </script>
 </body>
 </html>
