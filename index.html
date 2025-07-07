@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Wallet Balance</title>
+  <title>Wallet Balances</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -41,6 +41,22 @@
       font-size: 2.2em;
       font-weight: bold;
       color: #222;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #45a049;
     }
 
     .wallets-container {
@@ -52,32 +68,52 @@
   </style>
 </head>
 <body>
-  <h1>Wallet Balance</h1>
+  <h1>Wallet Balances</h1>
 
   <div class="wallets-container">
     <div class="wallet">
       <div class="label">Bitcoin (BTC)</div>
       <div class="balance" id="btcBalance">Loading...</div>
+      <button onclick="demoIncrease('BTC')">Demo Increase BTC</button>
     </div>
 
     <div class="wallet">
       <div class="label">Ethereum (ETH)</div>
       <div class="balance" id="ethBalance">Loading...</div>
+      <button onclick="demoIncrease('ETH')">Demo Increase ETH</button>
     </div>
   </div>
 
   <script>
-    const BTC_ADDRESS = "bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep";  // Replace with your BTC address
-    const ETH_ADDRESS = "your_eth_address_here";  // Replace with your ETH address
-    const ETHERSCAN_API_KEY = "YourApiKeyToken";  // Replace with your Etherscan API key
+    const BTC_ADDRESS = "your_btc_address_here"; 
+    const ETH_ADDRESS = "your_eth_address_here"; 
+    const ETHERSCAN_API_KEY = "YourApiKeyToken"; 
+
+    let currentBTC = 0;
+    let currentETH = 0;
+
+    function animateValue(element, start, end, duration, suffix) {
+      let startTime = null;
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        const value = start + (end - start) * progress;
+        element.textContent = value.toFixed(8) + suffix;
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        }
+      }
+      requestAnimationFrame(step);
+    }
 
     async function loadBalances() {
       // BTC
       try {
         const btcRes = await fetch(`https://blockchain.info/q/addressbalance/${BTC_ADDRESS}?confirmations=6`);
         const sats = await btcRes.text();
-        const btc = (parseInt(sats) / 1e8).toFixed(8);
-        document.getElementById("btcBalance").textContent = `${btc} BTC`;
+        const btc = parseInt(sats) / 1e8;
+        animateValue(document.getElementById("btcBalance"), currentBTC, btc, 1000, " BTC");
+        currentBTC = btc;
       } catch {
         document.getElementById("btcBalance").textContent = "Error";
       }
@@ -87,8 +123,9 @@
         const ethRes = await fetch(`https://api.etherscan.io/api?module=account&action=balance&address=${ETH_ADDRESS}&tag=latest&apikey=${ETHERSCAN_API_KEY}`);
         const data = await ethRes.json();
         if (data.status === "1") {
-          const eth = (parseInt(data.result) / 1e18).toFixed(8);
-          document.getElementById("ethBalance").textContent = `${eth} ETH`;
+          const eth = parseInt(data.result) / 1e18;
+          animateValue(document.getElementById("ethBalance"), currentETH, eth, 1000, " ETH");
+          currentETH = eth;
         } else {
           document.getElementById("ethBalance").textContent = "Error";
         }
@@ -97,8 +134,20 @@
       }
     }
 
+    function demoIncrease(type) {
+      if (type === "BTC") {
+        const newBTC = currentBTC + Math.random() * 0.001; // small increase
+        animateValue(document.getElementById("btcBalance"), currentBTC, newBTC, 1000, " BTC");
+        currentBTC = newBTC;
+      } else if (type === "ETH") {
+        const newETH = currentETH + Math.random() * 0.01; // small increase
+        animateValue(document.getElementById("ethBalance"), currentETH, newETH, 1000, " ETH");
+        currentETH = newETH;
+      }
+    }
+
     loadBalances();
-    setInterval(loadBalances, 30000); // update every 30 sec
+    setInterval(loadBalances, 30000); // refresh every 30 sec
   </script>
 </body>
 </html>
