@@ -2,68 +2,79 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Wallet Balance Checker</title>
+  <title>Wallet Balance</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; }
-    input { width: 100%; padding: 8px; margin: 8px 0; }
-    button { padding: 10px 20px; }
-    .result { margin-top: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 { color: #333; }
+    .wallet {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: inline-block;
+      min-width: 300px;
+      margin-top: 20px;
+    }
+    .balance {
+      font-size: 1.5em;
+      margin-top: 10px;
+    }
+    .label {
+      font-size: 0.9em;
+      color: #666;
+    }
   </style>
 </head>
 <body>
-  <h1>Wallet Balance Checker</h1>
+  <h1>Wallet Balance</h1>
 
-  <label>Bitcoin Address:</label>
-  <input type="text" id="btcAddress" placeholder="Enter Bitcoin address">
+  <div class="wallet">
+    <div class="label">Bitcoin (BTC)</div>
+    <div class="balance" id="btcBalance">Loading...</div>
+  </div>
 
-  <label>Ethereum Address:</label>
-  <input type="text" id="ethAddress" placeholder="Enter Ethereum address">
-
-  <button onclick="checkBalances()">Check Balances</button>
-
-  <div class="result" id="results"></div>
+  <div class="wallet">
+    <div class="label">Ethereum (ETH)</div>
+    <div class="balance" id="ethBalance">Loading...</div>
+  </div>
 
   <script>
-    async function checkBalances() {
-      const btcAddress = document.getElementById('btcAddress').value.trim();
-      const ethAddress = document.getElementById('ethAddress').value.trim();
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = "Fetching balances...";
+    const BTC_ADDRESS = "your_btc_address_here";  // Replace with your BTC address
+    const ETH_ADDRESS = "your_eth_address_here";  // Replace with your ETH address
+    const ETHERSCAN_API_KEY = "YourApiKeyToken";  // Replace with your Etherscan API key
 
-      let btcBalanceHtml = "";
-      let ethBalanceHtml = "";
-
-      // Fetch Bitcoin balance
-      if (btcAddress) {
-        try {
-          let btcResp = await fetch(`https://blockchain.info/q/addressbalance/${btcAddress}?confirmations=6`);
-          let btcBalanceSatoshis = await btcResp.text();
-          let btcBalanceBTC = (parseInt(btcBalanceSatoshis) / 1e8).toFixed(8);
-          btcBalanceHtml = `<p>BTC Balance: <strong>${btcBalanceBTC} BTC</strong></p>`;
-        } catch (err) {
-          btcBalanceHtml = `<p style="color:red;">Error fetching BTC balance.</p>`;
-        }
+    async function loadBalances() {
+      // BTC
+      try {
+        const btcRes = await fetch(`https://blockchain.info/q/addressbalance/${BTC_ADDRESS}?confirmations=6`);
+        const sats = await btcRes.text();
+        const btc = (parseInt(sats) / 1e8).toFixed(8);
+        document.getElementById("btcBalance").textContent = `${btc} BTC`;
+      } catch {
+        document.getElementById("btcBalance").textContent = "Error";
       }
 
-      // Fetch Ethereum balance (requires your API key)
-      const ETHERSCAN_API_KEY = "YourApiKeyToken";  // Replace with your Etherscan API key
-      if (ethAddress) {
-        try {
-          let ethResp = await fetch(`https://api.etherscan.io/api?module=account&action=balance&address=${ethAddress}&tag=latest&apikey=${ETHERSCAN_API_KEY}`);
-          let ethData = await ethResp.json();
-          if (ethData.status == "1") {
-            let ethBalanceETH = (parseInt(ethData.result) / 1e18).toFixed(8);
-            ethBalanceHtml = `<p>ETH Balance: <strong>${ethBalanceETH} ETH</strong></p>`;
-          } else {
-            ethBalanceHtml = `<p style="color:red;">Error fetching ETH balance.</p>`;
-          }
-        } catch (err) {
-          ethBalanceHtml = `<p style="color:red;">Error fetching ETH balance.</p>`;
+      // ETH
+      try {
+        const ethRes = await fetch(`https://api.etherscan.io/api?module=account&action=balance&address=${ETH_ADDRESS}&tag=latest&apikey=${ETHERSCAN_API_KEY}`);
+        const data = await ethRes.json();
+        if (data.status === "1") {
+          const eth = (parseInt(data.result) / 1e18).toFixed(8);
+          document.getElementById("ethBalance").textContent = `${eth} ETH`;
+        } else {
+          document.getElementById("ethBalance").textContent = "Error";
         }
+      } catch {
+        document.getElementById("ethBalance").textContent = "Error";
       }
-
-      resultsDiv.innerHTML = btcBalanceHtml + ethBalanceHtml;
     }
+
+    loadBalances();
   </script>
 </body>
 </html>
