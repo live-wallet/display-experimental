@@ -18,25 +18,24 @@
     padding: 20px;
     color: #333;
   }
-  .header-container {
+  .header {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
     margin-bottom: 20px;
   }
-  .profile-pic {
-    width: 60px;
-    height: 60px;
+  .header img {
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
   h1 {
     font-size: 1.8em;
     margin: 0;
   }
-  /* keep all your existing styles unchanged */
-  .wallets-container { 
+  .wallets-container {
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -58,7 +57,7 @@
     transform: translateY(-2px);
   }
   .balance {
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: bold;
     margin-bottom: 6px;
   }
@@ -132,12 +131,53 @@
     font-size: 0.95em;
     color: #444;
   }
+  h2 {
+    font-size: 1.4em;
+    margin: 30px 0 15px;
+    color: #333;
+  }
+  .supporters {
+    max-width: 400px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .supporter-card {
+    background: #f9f9f9;
+    padding: 8px 14px;
+    border-radius: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    font-size: 0.9em;
+    white-space: nowrap;
+    transition: all 0.3s;
+  }
+  .contact-circle {
+    margin-top: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+  }
+  .contact-circle:hover {
+    background: #ddd;
+  }
+  .contact-circle svg {
+    fill: #000;
+    width: 20px;
+    height: 20px;
+  }
 </style>
 </head>
 <body>
 
-<div class="header-container">
-  <img src="YOUR_PROFILE_PIC_URL_HERE" alt="Profile" class="profile-pic">
+<div class="header">
+  <img src="https://unavatar.io/x/qazwsxz12" alt="Profile picture">
   <h1>Wallet Balance</h1>
 </div>
 
@@ -154,11 +194,45 @@
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
+
+  <div class="wallet">
+    <div class="balance" id="ethBalance">Loading...</div>
+    <div>Ethereum</div>
+    <div class="copy-circle" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
+      <div class="tooltip">Copy Ethereum address</div>
+      <svg class="eth-icon" viewBox="0 0 256 417">
+        <polygon fill="#343434" points="127.9,0 125.1,9.3 125.1,279.4 127.9,282.1 255.8,208.4 "/>
+        <polygon fill="#8C8C8C" points="127.9,0 0,208.4 127.9,282.1 127.9,150.1 "/>
+        <polygon fill="#3C3C3B" points="127.9,307.2 126.3,308.8 126.3,414.8 127.9,417 255.9,232.8 "/>
+        <polygon fill="#8C8C8C" points="127.9,417 127.9,307.2 0,232.8 "/>
+        <polygon fill="#141414" points="127.9,282.1 255.8,208.4 127.9,150.1 "/>
+        <polygon fill="#393939" points="0,208.4 127.9,282.1 127.9,150.1 "/>
+      </svg>
+    </div>
+    <div class="copied-msg">Copied!</div>
+  </div>
 </div>
 
 <p class="info">
   Contributions to this wallet support and grow businesses.
 </p>
+
+<h2>Recent Supporters</h2>
+<div class="supporters" id="supporters">
+  <div class="supporter-card">Loading supporters...</div>
+</div>
+
+<p class="info">
+  Interested in what I've built here? Send me a message on X.
+</p>
+
+<div class="contact-circle">
+  <a href="https://x.com/qazwsxz12" target="_blank">
+    <svg viewBox="0 0 24 24">
+      <path d="M4.5 3h4.9l3.6 5.2 3.6-5.2h4.9l-6.5 9.3 7 10.7h-5l-4.5-6.7-4.5 6.7h-5l7-10.7-6.5-9.3z"/>
+    </svg>
+  </a>
+</div>
 
 <script>
 function copyAddress(el) {
@@ -168,7 +242,77 @@ function copyAddress(el) {
     setTimeout(() => msg.style.opacity = 0, 800);
   });
 }
-</script>
 
+function formatBalance(val) {
+  return parseFloat(val).toPrecision(6).replace(/\.?0+$/, '');
+}
+
+let prices = {};
+fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd')
+.then(res => res.json())
+.then(data => {
+  prices.btc = data.bitcoin.usd;
+  prices.eth = data.ethereum.usd;
+
+  fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
+    .then(res => res.text())
+    .then(sats => {
+      const btc = parseInt(sats) / 100000000;
+      document.getElementById("btcBalance").textContent = 
+        `${formatBalance(btc)} BTC ≈ $${(btc*prices.btc).toFixed(2)}`;
+    });
+
+  fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+    .then(res => res.json())
+    .then(data => {
+      const eth = parseInt(data.result) / 1e18;
+      document.getElementById("ethBalance").textContent = 
+        `${formatBalance(eth)} ETH ≈ $${(eth*prices.eth).toFixed(2)}`;
+    });
+
+  Promise.all([
+    fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r=>r.json()).catch(()=>null),
+    fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+      .then(r=>r.json()).catch(()=>null)
+  ]).then(([btcData, ethData])=>{
+    let supporters = [];
+    if(btcData && btcData.txs){
+      btcData.txs.slice(0,4).forEach(tx=>{
+        tx.inputs.forEach(inp=>{
+          let val = inp.prev_out.value/1e8;
+          supporters.push({
+            address: inp.prev_out.addr,
+            amount: `${formatBalance(val)} BTC`
+          });
+        });
+      });
+    }
+    if(ethData && ethData.result){
+      ethData.result.slice(0,4).forEach(tx=>{
+        if(tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e"){
+          let val = parseInt(tx.value)/1e18;
+          supporters.push({
+            address: tx.from,
+            amount: `${formatBalance(val)} ETH`
+          });
+        }
+      });
+    }
+
+    const container = document.getElementById("supporters");
+    container.innerHTML = "";
+    if(supporters.length){
+      supporters.slice(0,4).forEach(sup=>{
+        const card = document.createElement("div");
+        card.className = "supporter-card";
+        card.textContent = `${sup.address.slice(0,6)}...${sup.address.slice(-4)} tipped ${sup.amount}`;
+        container.appendChild(card);
+      });
+    } else {
+      container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
+    }
+  });
+});
+</script>
 </body>
 </html>
