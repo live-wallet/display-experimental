@@ -18,10 +18,10 @@
     padding: 20px;
     color: #333;
   }
-  .header {
+  .header-container {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
     margin-bottom: 20px;
   }
   .profile-pic {
@@ -29,12 +29,13 @@
     height: 50px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   }
   h1 {
     font-size: 1.8em;
     margin: 0;
   }
+  /* Existing wallet styles ... */
   .wallets-container {
     display: flex;
     flex-direction: column;
@@ -53,110 +54,57 @@
     width: 100%;
     max-width: 300px;
   }
-  .wallet:hover {
-    transform: translateY(-2px);
-  }
-  .balance {
-    font-size: 1.5em;
-    font-weight: bold;
-    margin-bottom: 6px;
-  }
-  .usd {
-    font-size: 0.9em;
-    color: #666;
-  }
+  .wallet:hover { transform: translateY(-2px); }
+  .balance { font-size: 1.5em; font-weight: bold; margin-bottom: 6px; }
   .copy-circle {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: #eee;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px auto 0;
-    cursor: pointer;
-    position: relative;
+    width: 45px; height: 45px; border-radius: 50%;
+    background: #eee; display: flex; align-items: center; justify-content: center;
+    margin: 10px auto 0; cursor: pointer; position: relative;
   }
-  .copy-circle:hover {
-    background: #ddd;
-  }
+  .copy-circle:hover { background: #ddd; }
   .tooltip {
-    position: absolute;
-    bottom: 120%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(240, 240, 240, 0.95);
-    color: #333;
-    padding: 3px 6px;
-    border-radius: 4px;
-    font-size: 0.7em;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: opacity 0.2s;
+    position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+    background: rgba(240, 240, 240, 0.95); color: #333;
+    padding: 3px 6px; border-radius: 4px; font-size: 0.7em;
+    opacity: 0; visibility: hidden; transition: opacity 0.2s;
   }
-  .tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 4px;
-    border-style: solid;
-    border-color: rgba(240,240,240,0.95) transparent transparent transparent;
-  }
-  .copy-circle:hover .tooltip {
-    opacity: 1;
-    visibility: visible;
-  }
+  .copy-circle:hover .tooltip { opacity: 1; visibility: visible; }
   .copied-msg {
-    position: absolute;
-    bottom: -18px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.75em;
-    color: #444;
-    opacity: 0;
-    transition: opacity 0.2s;
+    position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+    font-size: 0.75em; color: #444; opacity: 0; transition: opacity 0.2s;
   }
+  /* Remaining styles for supporters, contact, etc... */
 </style>
 </head>
 <body>
 
-<div class="header">
-  <img class="profile-pic" src="https://pbs.twimg.com/profile_images/1797053741307803648/OEEMDW7i_400x400.jpg" alt="Profile Picture">
+<div class="header-container">
+  <img src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png" alt="Profile" class="profile-pic" />
   <h1>Wallet Balance</h1>
 </div>
 
 <div class="wallets-container">
   <div class="wallet">
     <div class="balance" id="btcBalance">Loading...</div>
-    <div class="usd" id="btcUSD">Loading...</div>
     <div>Bitcoin</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
       <div class="tooltip">Copy Bitcoin address</div>
-      <svg class="btc-icon" viewBox="0 0 32 32">
-        <circle cx="16" cy="16" r="16" fill="#eee"/>
-        <path fill="#343434" d="..."/>
-      </svg>
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
-
   <div class="wallet">
     <div class="balance" id="ethBalance">Loading...</div>
-    <div class="usd" id="ethUSD">Loading...</div>
     <div>Ethereum</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
       <div class="tooltip">Copy Ethereum address</div>
-      <svg class="eth-icon" viewBox="0 0 256 417">
-        <polygon fill="#343434" points="..."/>
-      </svg>
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
 </div>
+
+<p class="info">
+  Contributions to this wallet support and grow businesses.
+</p>
 
 <script>
 function copyAddress(el) {
@@ -166,31 +114,6 @@ function copyAddress(el) {
     setTimeout(() => msg.style.opacity = 0, 800);
   });
 }
-
-async function loadBalances() {
-  try {
-    let btcRes = await fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`);
-    let sats = await btcRes.text();
-    let btc = (parseInt(sats) / 100000000).toFixed(4);
-    document.getElementById("btcBalance").textContent = `${btc} BTC`;
-
-    let btcPriceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-    let btcPrice = (await btcPriceRes.json()).bitcoin.usd;
-    document.getElementById("btcUSD").textContent = `$${(btc * btcPrice).toFixed(2)} USD`;
-
-    let ethRes = await fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`);
-    let eth = (parseInt((await ethRes.json()).result) / 1e18).toFixed(4);
-    document.getElementById("ethBalance").textContent = `${eth} ETH`;
-
-    let ethPriceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
-    let ethPrice = (await ethPriceRes.json()).ethereum.usd;
-    document.getElementById("ethUSD").textContent = `$${(eth * ethPrice).toFixed(2)} USD`;
-  } catch (e) {
-    document.getElementById("btcBalance").textContent = "Error";
-    document.getElementById("ethBalance").textContent = "Error";
-  }
-}
-loadBalances();
 </script>
 
 </body>
