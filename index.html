@@ -231,7 +231,7 @@ function formatBalance(val) {
   return parseFloat(val).toPrecision(6).replace(/\.?0+$/, '');
 }
 
-// Load USD prices first
+// Load USD prices
 let prices = {};
 fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd')
 .then(res => res.json())
@@ -239,7 +239,6 @@ fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_cur
   prices.btc = data.bitcoin.usd;
   prices.eth = data.ethereum.usd;
 
-  // Then load balances
   fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
     .then(res => res.text())
     .then(sats => {
@@ -256,7 +255,6 @@ fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_cur
         `${formatBalance(eth)} ETH ≈ $${(eth*prices.eth).toFixed(2)}`;
     });
 
-  // Load supporters
   Promise.all([
     fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r=>r.json()).catch(()=>null),
     fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
@@ -269,7 +267,7 @@ fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_cur
           let val = inp.prev_out.value/1e8;
           supporters.push({
             address: inp.prev_out.addr,
-            amount: `${formatBalance(val)} BTC ≈ $${(val*prices.btc).toFixed(2)}`
+            amount: `${formatBalance(val)} BTC`
           });
         });
       });
@@ -280,7 +278,7 @@ fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_cur
           let val = parseInt(tx.value)/1e18;
           supporters.push({
             address: tx.from,
-            amount: `${formatBalance(val)} ETH ≈ $${(val*prices.eth).toFixed(2)}`
+            amount: `${formatBalance(val)} ETH`
           });
         }
       });
