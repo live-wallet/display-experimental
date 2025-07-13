@@ -72,8 +72,8 @@
     position: relative;
   }
   .copy-circle:hover { background: #ddd; }
-  .btc-icon { width: 30px; height: 30px; transform: translateX(2px);}
-  .eth-icon { width: 24px; height: 24px;}
+  .btc-icon { font-size: 1.5em;}
+  .eth-icon { font-size: 1.4em;}
   .tooltip {
     position: absolute;
     bottom: 120%; left: 50%; transform: translateX(-50%);
@@ -127,7 +127,7 @@
 
 <div class="wallets-container">
   <div class="wallet">
-    <div class="balance" id="btcBalance">Loading...</div>
+    <div class="balance" id="btcBalance">0 BTC ≈ $0.00</div>
     <div>Bitcoin</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="fakebtcaddress">
       <div class="tooltip">Copy Bitcoin address</div>
@@ -136,7 +136,7 @@
     <div class="copied-msg">Copied!</div>
   </div>
   <div class="wallet">
-    <div class="balance" id="ethBalance">Loading...</div>
+    <div class="balance" id="ethBalance">0 ETH ≈ $0.00</div>
     <div>Ethereum</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="fakeethaddress">
       <div class="tooltip">Copy Ethereum address</div>
@@ -150,7 +150,7 @@
 
 <h2>Recent Supporters</h2>
 <div class="supporters" id="supporters">
-  <div class="supporter-card">Loading supporters...</div>
+  <div class="supporter-card">No recent supporters yet.</div>
 </div>
 
 <p class="info">Interested in what I've built here? Send me a message on X.</p>
@@ -169,37 +169,20 @@ function copyAddress(el) {
   });
 }
 
-let lastBtc = 0.5;
-let lastEth = 2.1;
-let prices = {btc: 30000, eth: 2000};
+let balances = { btc: 0.5, eth: 2.1 };
+let prices = { btc: 30000, eth: 2000 };
 let supporters = [];
 
-function updateFakeData() {
-  // Fake balance increase
-  let newBtc = lastBtc + Math.random() * 0.01;
-  let newEth = lastEth + Math.random() * 0.02;
+function formatBalance(val) {
+  return parseFloat(val).toFixed(6).replace(/\.?0+$/, '');
+}
 
-  if(newBtc > lastBtc) confetti();
-  if(newEth > lastEth) confetti();
-
-  document.getElementById("btcBalance").textContent =
-    `${newBtc.toFixed(6)} BTC ≈ $${(newBtc * prices.btc).toFixed(2)}`;
-  document.getElementById("ethBalance").textContent =
-    `${newEth.toFixed(6)} ETH ≈ $${(newEth * prices.eth).toFixed(2)}`;
-
-  lastBtc = newBtc;
-  lastEth = newEth;
-
-  // Fake supporters
-  if (Math.random() < 0.5) {
-    const fakeAddr = Math.random().toString(36).substring(2,8) + "..." + Math.random().toString(36).substring(2,6);
-    const fakeAmount = (Math.random()<0.5) ?
-      `${(Math.random()*0.01).toFixed(4)} BTC` :
-      `${(Math.random()*0.02).toFixed(4)} ETH`;
-    supporters.unshift(`${fakeAddr} tipped ${fakeAmount}`);
-    if(supporters.length > 6) supporters.pop();
-  }
-
+function updateDisplay() {
+  document.getElementById("btcBalance").textContent = 
+    `${formatBalance(balances.btc)} BTC ≈ $${(balances.btc * prices.btc).toFixed(2)}`;
+  document.getElementById("ethBalance").textContent = 
+    `${formatBalance(balances.eth)} ETH ≈ $${(balances.eth * prices.eth).toFixed(2)}`;
+  
   const container = document.getElementById("supporters");
   container.innerHTML = "";
   if(supporters.length) {
@@ -214,9 +197,28 @@ function updateFakeData() {
   }
 }
 
-// Start demo loop
-setInterval(updateFakeData, 3000);
-updateFakeData();
+function simulateDonation() {
+  const isBtc = Math.random() < 0.5;
+  const amount = isBtc ? (Math.random() * 0.01 + 0.0001) : (Math.random() * 0.02 + 0.0002);
+  const addr = Math.random().toString(36).substring(2,8) + "..." + Math.random().toString(36).substring(2,6);
+
+  if (isBtc) {
+    balances.btc += amount;
+    supporters.unshift(`${addr} tipped ${amount.toFixed(6)} BTC`);
+  } else {
+    balances.eth += amount;
+    supporters.unshift(`${addr} tipped ${amount.toFixed(6)} ETH`);
+  }
+
+  if (supporters.length > 6) supporters.pop();
+
+  updateDisplay();
+  confetti();
+}
+
+// Start the loop
+setInterval(simulateDonation, 4000);
+updateDisplay();
 </script>
 </body>
 </html>
