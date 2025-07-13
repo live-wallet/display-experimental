@@ -66,7 +66,7 @@
     border-radius: 10px;
     overflow: hidden;
     height: 10px;
-    margin: 10px 0;
+    margin: 10px 0 4px;
     width: 100%;
   }
   .progress-bar {
@@ -74,6 +74,11 @@
     background: #76c7c0;
     width: 0;
     transition: width 0.5s;
+  }
+  .goal-text {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 5px;
   }
   .copy-circle {
     width: 45px;
@@ -201,6 +206,7 @@
     <div class="progress-bar-container">
       <div class="progress-bar" id="btcProgress"></div>
     </div>
+    <div class="goal-text" id="btcGoalText">Loading...</div>
     <div>Bitcoin</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
       <div class="tooltip">Copy Bitcoin address</div>
@@ -217,6 +223,7 @@
     <div class="progress-bar-container">
       <div class="progress-bar" id="ethProgress"></div>
     </div>
+    <div class="goal-text" id="ethGoalText">Loading...</div>
     <div>Ethereum</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
       <div class="tooltip">Copy Ethereum address</div>
@@ -257,6 +264,7 @@ function copyAddress(el) {
     setTimeout(() => msg.style.opacity = 0, 800);
   });
 }
+
 function formatBalance(val) {
   return parseFloat(val).toPrecision(6).replace(/\.?0+$/, '');
 }
@@ -275,20 +283,22 @@ fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_cur
     .then(res => res.text())
     .then(sats => {
       const btc = parseInt(sats) / 100000000;
+      const pct = Math.min(100, (btc / btcGoal) * 100).toFixed(1);
       document.getElementById("btcBalance").textContent = 
         `${formatBalance(btc)} BTC ≈ $${(btc*prices.btc).toFixed(2)}`;
-      document.getElementById("btcProgress").style.width = 
-        Math.min(100, (btc/btcGoal)*100).toFixed(1) + '%';
+      document.getElementById("btcProgress").style.width = pct + '%';
+      document.getElementById("btcGoalText").textContent = `${pct}% to goal`;
     });
 
   fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
     .then(res => res.json())
     .then(data => {
       const eth = parseInt(data.result) / 1e18;
+      const pct = Math.min(100, (eth / ethGoal) * 100).toFixed(1);
       document.getElementById("ethBalance").textContent = 
         `${formatBalance(eth)} ETH ≈ $${(eth*prices.eth).toFixed(2)}`;
-      document.getElementById("ethProgress").style.width = 
-        Math.min(100, (eth/ethGoal)*100).toFixed(1) + '%';
+      document.getElementById("ethProgress").style.width = pct + '%';
+      document.getElementById("ethGoalText").textContent = `${pct}% to goal`;
     });
 
   Promise.all([
