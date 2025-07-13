@@ -61,19 +61,19 @@
     font-weight: bold;
     margin-bottom: 6px;
   }
-  .progress-container {
-    width: 100%;
-    height: 8px;
+  .progress-bar-container {
     background: #eee;
-    border-radius: 4px;
+    border-radius: 10px;
     overflow: hidden;
-    margin: 8px 0;
+    height: 10px;
+    margin: 10px 0;
+    width: 100%;
   }
   .progress-bar {
-    height: 100%;
-    background: #6c8;
-    width: 0%;
-    transition: width 0.4s ease;
+    height: 10px;
+    background: #76c7c0;
+    width: 0;
+    transition: width 0.5s;
   }
   .copy-circle {
     width: 45px;
@@ -198,13 +198,15 @@
 <div class="wallets-container">
   <div class="wallet">
     <div class="balance" id="btcBalance">Loading...</div>
-    <div class="progress-container"><div class="progress-bar" id="btcProgress"></div></div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="btcProgress"></div>
+    </div>
     <div>Bitcoin</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
       <div class="tooltip">Copy Bitcoin address</div>
       <svg class="btc-icon" viewBox="0 0 32 32">
         <circle cx="16" cy="16" r="16" fill="#eee"/>
-        <path fill="#343434" d="M20.192 14.56c.308-2.062-1.264-3.176-3.42-3.91l.698-2.8-1.704-.423-.68 2.727c-.448-.112-.908-.218-1.36-.324l.685-2.74-1.704-.423-.698 2.8c-.368-.085-.73-.17-1.084-.259l.002-.009-2.35-.584-.453 1.815s1.264.29 1.238.309c.691.172.815.63.793.993l-.79 3.166c.047.012.107.03.173.058l-.174-.043-1.106 4.43c-.084.208-.297.52-.778.402.017.024-1.24-.309-1.24-.309l-.845 1.947 2.215.552c.41.102.814.21 1.214.313l-.705 2.832 1.703.423.698-2.802c.462.125.91.242 1.348.353l-.693 2.78 1.704.423.705-2.832c2.909.551 5.094.328 6.021-2.305.742-2.112-.037-3.332-1.566-4.127 1.113-.257 1.951-.988 2.175-2.497z"/>
+        <path fill="#343434" d="..."/>
       </svg>
     </div>
     <div class="copied-msg">Copied!</div>
@@ -212,17 +214,14 @@
 
   <div class="wallet">
     <div class="balance" id="ethBalance">Loading...</div>
-    <div class="progress-container"><div class="progress-bar" id="ethProgress"></div></div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="ethProgress"></div>
+    </div>
     <div>Ethereum</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
       <div class="tooltip">Copy Ethereum address</div>
       <svg class="eth-icon" viewBox="0 0 256 417">
-        <polygon fill="#343434" points="127.9,0 125.1,9.3 125.1,279.4 127.9,282.1 255.8,208.4 "/>
-        <polygon fill="#8C8C8C" points="127.9,0 0,208.4 127.9,282.1 127.9,150.1 "/>
-        <polygon fill="#3C3C3B" points="127.9,307.2 126.3,308.8 126.3,414.8 127.9,417 255.9,232.8 "/>
-        <polygon fill="#8C8C8C" points="127.9,417 127.9,307.2 0,232.8 "/>
-        <polygon fill="#141414" points="127.9,282.1 255.8,208.4 127.9,150.1 "/>
-        <polygon fill="#393939" points="0,208.4 127.9,282.1 127.9,150.1 "/>
+        <polygon fill="#343434" points="..."/>
       </svg>
     </div>
     <div class="copied-msg">Copied!</div>
@@ -258,15 +257,14 @@ function copyAddress(el) {
     setTimeout(() => msg.style.opacity = 0, 800);
   });
 }
-
 function formatBalance(val) {
   return parseFloat(val).toPrecision(6).replace(/\.?0+$/, '');
 }
 
-let prices = {};
 const btcGoal = 0.05;
 const ethGoal = 1;
 
+let prices = {};
 fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd')
 .then(res => res.json())
 .then(data => {
@@ -280,7 +278,7 @@ fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_cur
       document.getElementById("btcBalance").textContent = 
         `${formatBalance(btc)} BTC ≈ $${(btc*prices.btc).toFixed(2)}`;
       document.getElementById("btcProgress").style.width = 
-        Math.min(100, (btc/btcGoal)*100).toFixed(2) + "%";
+        Math.min(100, (btc/btcGoal)*100).toFixed(1) + '%';
     });
 
   fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
@@ -290,7 +288,7 @@ fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_cur
       document.getElementById("ethBalance").textContent = 
         `${formatBalance(eth)} ETH ≈ $${(eth*prices.eth).toFixed(2)}`;
       document.getElementById("ethProgress").style.width = 
-        Math.min(100, (eth/ethGoal)*100).toFixed(2) + "%";
+        Math.min(100, (eth/ethGoal)*100).toFixed(1) + '%';
     });
 
   Promise.all([
@@ -303,10 +301,7 @@ fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_cur
       btcData.txs.slice(0,4).forEach(tx=>{
         tx.inputs.forEach(inp=>{
           let val = inp.prev_out.value/1e8;
-          supporters.push({
-            address: inp.prev_out.addr,
-            amount: `${formatBalance(val)} BTC`
-          });
+          supporters.push({ address: inp.prev_out.addr, amount: `${formatBalance(val)} BTC` });
         });
       });
     }
@@ -314,14 +309,10 @@ fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_cur
       ethData.result.slice(0,4).forEach(tx=>{
         if(tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e"){
           let val = parseInt(tx.value)/1e18;
-          supporters.push({
-            address: tx.from,
-            amount: `${formatBalance(val)} ETH`
-          });
+          supporters.push({ address: tx.from, amount: `${formatBalance(val)} ETH` });
         }
       });
     }
-
     const container = document.getElementById("supporters");
     container.innerHTML = "";
     if(supporters.length){
