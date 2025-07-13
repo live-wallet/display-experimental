@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wallet Balance</title>
+<title>Wallet</title>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
   body {
@@ -24,12 +24,20 @@
     gap: 12px;
     margin-bottom: 20px;
   }
-  .header img {
+  .header-icon-circle {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    object-fit: cover;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .header-icon-circle svg {
+    width: 24px;
+    height: 24px;
+    fill: #333;
   }
   h1 {
     font-size: 1.8em;
@@ -196,147 +204,22 @@
 <body>
 
 <div class="header">
-  <img src="https://unavatar.io/x/qazwsxz12" alt="Profile picture">
-  <h1>Wallet Balance</h1>
+  <h1>Wallet</h1>
+  <div class="header-icon-circle">
+    <svg viewBox="0 0 24 24">
+      <path d="M2 7a5 5 0 015-5h11a4 4 0 014 4v12a4 4 0 01-4 4H7a5 5 0 01-5-5V7zm2 0v10a3 3 0 003 3h11a2 2 0 002-2V6a2 2 0 00-2-2H7a3 3 0 00-3 3zm13 3a1 1 0 100 2 1 1 0 000-2z"/>
+    </svg>
+  </div>
 </div>
 
 <div class="wallets-container">
-  <div class="wallet">
-    <div class="balance" id="btcBalance">Loading...</div>
-    <div class="progress-bar-container">
-      <div class="progress-bar" id="btcProgress"></div>
-    </div>
-    <div class="goal-text" id="btcGoalText">Loading...</div>
-    <div>Bitcoin</div>
-    <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
-      <div class="tooltip">Copy Bitcoin address</div>
-      <svg class="btc-icon" viewBox="0 0 32 32">
-        <circle cx="16" cy="16" r="16" fill="#eee"/>
-        <path fill="#343434" d="..."/>
-      </svg>
-    </div>
-    <div class="copied-msg">Copied!</div>
-  </div>
-
-  <div class="wallet">
-    <div class="balance" id="ethBalance">Loading...</div>
-    <div class="progress-bar-container">
-      <div class="progress-bar" id="ethProgress"></div>
-    </div>
-    <div class="goal-text" id="ethGoalText">Loading...</div>
-    <div>Ethereum</div>
-    <div class="copy-circle" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
-      <div class="tooltip">Copy Ethereum address</div>
-      <svg class="eth-icon" viewBox="0 0 256 417">
-        <polygon fill="#343434" points="..."/>
-      </svg>
-    </div>
-    <div class="copied-msg">Copied!</div>
-  </div>
+  <!-- SAME BALANCE / PROGRESS BARS / COPIES AS BEFORE -->
+  <!-- ... (keep your wallets, progress, supporters, contact as before) -->
 </div>
 
-<p class="info">
-  Contributions to this wallet support and grow businesses.
-</p>
-
-<h2>Recent Supporters</h2>
-<div class="supporters" id="supporters">
-  <div class="supporter-card">Loading supporters...</div>
-</div>
-
-<p class="info">
-  Interested in what I've built here? Send me a message on X.
-</p>
-
-<div class="contact-circle">
-  <a href="https://x.com/qazwsxz12" target="_blank">
-    <svg viewBox="0 0 24 24">
-      <path d="M4.5 3h4.9l3.6 5.2 3.6-5.2h4.9l-6.5 9.3 7 10.7h-5l-4.5-6.7-4.5 6.7h-5l7-10.7-6.5-9.3z"/>
-    </svg>
-  </a>
-</div>
-
+<!-- Include your previous <script> with fetching balances, supporters, etc -->
 <script>
-function copyAddress(el) {
-  navigator.clipboard.writeText(el.getAttribute("data-address")).then(() => {
-    const msg = el.parentElement.querySelector('.copied-msg');
-    msg.style.opacity = 1;
-    setTimeout(() => msg.style.opacity = 0, 800);
-  });
-}
-
-function formatBalance(val) {
-  return parseFloat(val).toPrecision(6).replace(/\.?0+$/, '');
-}
-
-const btcGoal = 0.05;
-const ethGoal = 1;
-
-let prices = {};
-fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd')
-.then(res => res.json())
-.then(data => {
-  prices.btc = data.bitcoin.usd;
-  prices.eth = data.ethereum.usd;
-
-  fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
-    .then(res => res.text())
-    .then(sats => {
-      const btc = parseInt(sats) / 100000000;
-      const pct = Math.min(100, (btc / btcGoal) * 100).toFixed(1);
-      document.getElementById("btcBalance").textContent = 
-        `${formatBalance(btc)} BTC ≈ $${(btc*prices.btc).toFixed(2)}`;
-      document.getElementById("btcProgress").style.width = pct + '%';
-      document.getElementById("btcGoalText").textContent = `${pct}% to goal`;
-    });
-
-  fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
-    .then(res => res.json())
-    .then(data => {
-      const eth = parseInt(data.result) / 1e18;
-      const pct = Math.min(100, (eth / ethGoal) * 100).toFixed(1);
-      document.getElementById("ethBalance").textContent = 
-        `${formatBalance(eth)} ETH ≈ $${(eth*prices.eth).toFixed(2)}`;
-      document.getElementById("ethProgress").style.width = pct + '%';
-      document.getElementById("ethGoalText").textContent = `${pct}% to goal`;
-    });
-
-  Promise.all([
-    fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r=>r.json()).catch(()=>null),
-    fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
-      .then(r=>r.json()).catch(()=>null)
-  ]).then(([btcData, ethData])=>{
-    let supporters = [];
-    if(btcData && btcData.txs){
-      btcData.txs.slice(0,4).forEach(tx=>{
-        tx.inputs.forEach(inp=>{
-          let val = inp.prev_out.value/1e8;
-          supporters.push({ address: inp.prev_out.addr, amount: `${formatBalance(val)} BTC` });
-        });
-      });
-    }
-    if(ethData && ethData.result){
-      ethData.result.slice(0,4).forEach(tx=>{
-        if(tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e"){
-          let val = parseInt(tx.value)/1e18;
-          supporters.push({ address: tx.from, amount: `${formatBalance(val)} ETH` });
-        }
-      });
-    }
-    const container = document.getElementById("supporters");
-    container.innerHTML = "";
-    if(supporters.length){
-      supporters.slice(0,4).forEach(sup=>{
-        const card = document.createElement("div");
-        card.className = "supporter-card";
-        card.textContent = `${sup.address.slice(0,6)}...${sup.address.slice(-4)} tipped ${sup.amount}`;
-        container.appendChild(card);
-      });
-    } else {
-      container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
-    }
-  });
-});
+  // ... keep your JS exactly the same
 </script>
 </body>
 </html>
