@@ -96,6 +96,16 @@
     max-width: 800px;
   }
 
+  .leaderboards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 800px;
+    margin-top: 20px;
+  }
+
   .supporters, .leaderboard {
     display: flex;
     flex-direction: column;
@@ -157,10 +167,18 @@
       <div class="supporter-card">No recent supporters yet.</div>
     </div>
   </div>
+</div>
 
+<div class="leaderboards">
   <div>
-    <h2>Top Supporters</h2>
-    <div class="leaderboard" id="leaderboard">
+    <h2>Top Bitcoin Supporters</h2>
+    <div class="leaderboard" id="btcLeaderboard">
+      <div class="leader-card">No data yet.</div>
+    </div>
+  </div>
+  <div>
+    <h2>Top Ethereum Supporters</h2>
+    <div class="leaderboard" id="ethLeaderboard">
       <div class="leader-card">No data yet.</div>
     </div>
   </div>
@@ -185,7 +203,8 @@ function copyAddress(el) {
 let balances = { btc: 0.5, eth: 2.1 };
 let prices = { btc: 30000, eth: 2000 };
 let supporters = [];
-let leaderData = {};  // accumulate total tips per supporter
+let btcLeaders = {};
+let ethLeaders = {};
 
 function formatBalance(val) {
   return parseFloat(val).toFixed(6).replace(/\.?0+$/, '');
@@ -196,7 +215,7 @@ function updateDisplay() {
     `${formatBalance(balances.btc)} BTC ≈ $${(balances.btc * prices.btc).toFixed(2)}`;
   document.getElementById("ethBalance").textContent = 
     `${formatBalance(balances.eth)} ETH ≈ $${(balances.eth * prices.eth).toFixed(2)}`;
-  
+
   const container = document.getElementById("supporters");
   container.innerHTML = "";
   if(supporters.length) {
@@ -210,21 +229,34 @@ function updateDisplay() {
     container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
   }
 
-  const leaderContainer = document.getElementById("leaderboard");
-  leaderContainer.innerHTML = "";
-  let sorted = Object.entries(leaderData)
-    .sort((a,b) => b[1].totalUsd - a[1].totalUsd)
-    .slice(0,6);
-
-  if(sorted.length){
-    sorted.forEach(([addr, data])=>{
+  const btcBoard = document.getElementById("btcLeaderboard");
+  btcBoard.innerHTML = "";
+  let sortedBtc = Object.entries(btcLeaders)
+    .sort((a,b) => b[1] - a[1]).slice(0,6);
+  if(sortedBtc.length){
+    sortedBtc.forEach(([addr, total])=>{
       const div = document.createElement("div");
       div.className = "leader-card";
-      div.textContent = `${addr} (${data.total.toFixed(6)} ${data.coin}) ≈ $${data.totalUsd.toFixed(2)}`;
-      leaderContainer.appendChild(div);
+      div.textContent = `${addr} (${total.toFixed(6)} BTC)`;
+      btcBoard.appendChild(div);
     });
   } else {
-    leaderContainer.innerHTML = `<div class="leader-card">No data yet.</div>`;
+    btcBoard.innerHTML = `<div class="leader-card">No data yet.</div>`;
+  }
+
+  const ethBoard = document.getElementById("ethLeaderboard");
+  ethBoard.innerHTML = "";
+  let sortedEth = Object.entries(ethLeaders)
+    .sort((a,b) => b[1] - a[1]).slice(0,6);
+  if(sortedEth.length){
+    sortedEth.forEach(([addr, total])=>{
+      const div = document.createElement("div");
+      div.className = "leader-card";
+      div.textContent = `${addr} (${total.toFixed(6)} ETH)`;
+      ethBoard.appendChild(div);
+    });
+  } else {
+    ethBoard.innerHTML = `<div class="leader-card">No data yet.</div>`;
   }
 }
 
@@ -236,15 +268,11 @@ function simulateDonation() {
   if (isBtc) {
     balances.btc += amount;
     supporters.unshift(`${addr} tipped ${amount.toFixed(6)} BTC`);
-    if (!leaderData[addr]) leaderData[addr] = { total: 0, totalUsd: 0, coin: 'BTC' };
-    leaderData[addr].total += amount;
-    leaderData[addr].totalUsd += amount * prices.btc;
+    btcLeaders[addr] = (btcLeaders[addr] || 0) + amount;
   } else {
     balances.eth += amount;
     supporters.unshift(`${addr} tipped ${amount.toFixed(6)} ETH`);
-    if (!leaderData[addr]) leaderData[addr] = { total: 0, totalUsd: 0, coin: 'ETH' };
-    leaderData[addr].total += amount;
-    leaderData[addr].totalUsd += amount * prices.eth;
+    ethLeaders[addr] = (ethLeaders[addr] || 0) + amount;
   }
 
   if (supporters.length > 6) supporters.pop();
@@ -252,7 +280,6 @@ function simulateDonation() {
   confetti();
 }
 
-// start the loop
 setInterval(simulateDonation, 4000);
 updateDisplay();
 </script>
