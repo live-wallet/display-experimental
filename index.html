@@ -31,10 +31,8 @@
     object-fit: cover;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
-  h1 {
-    font-size: 1.8em;
-    margin: 0;
-  }
+  h1 { font-size: 1.8em; margin: 0; }
+
   .wallets-container {
     display: flex;
     flex-direction: column;
@@ -54,29 +52,19 @@
     max-width: 300px;
   }
   .wallet:hover { transform: translateY(-2px); }
-  .balance {
-    font-size: 1.3em;
-    font-weight: bold;
-    margin-bottom: 6px;
-  }
+  .balance { font-size: 1.3em; font-weight: bold; margin-bottom: 6px; }
+
   .copy-circle {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: #eee;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px auto 0;
-    cursor: pointer;
-    position: relative;
+    width: 45px; height: 45px; border-radius: 50%;
+    background: #eee; display: flex; align-items: center; justify-content: center;
+    margin: 10px auto 0; cursor: pointer; position: relative;
   }
   .copy-circle:hover { background: #ddd; }
   .btc-icon { font-size: 1.5em;}
   .eth-icon { font-size: 1.4em;}
+
   .tooltip {
-    position: absolute;
-    bottom: 120%; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
     background: rgba(240,240,240,0.95); color: #333;
     padding: 3px 6px; border-radius: 4px; font-size: 0.7em;
     white-space: nowrap; opacity: 0; visibility: hidden;
@@ -95,20 +83,34 @@
     transform: translateX(-50%); font-size: 0.75em; color: #444;
     opacity: 0; transition: opacity 0.2s;
   }
-  .info {
-    max-width: 400px; margin-top: 25px;
-    font-size: 0.95em; color: #444;
-  }
+
+  .info { max-width: 400px; margin-top: 25px; font-size: 0.95em; color: #444; }
   h2 { font-size: 1.4em; margin: 30px 0 15px; color: #333; }
-  .supporters {
-    max-width: 400px; display: flex; flex-wrap: wrap;
-    gap: 10px; justify-content: center;
+
+  .sections-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 800px;
   }
-  .supporter-card {
+
+  .supporters, .leaderboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .supporter-card, .leader-card {
     background: #f9f9f9; padding: 8px 14px;
     border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     font-size: 0.9em; white-space: nowrap; transition: all 0.3s;
   }
+
   .contact-circle {
     margin-top: 30px; width: 50px; height: 50px; border-radius: 50%;
     background: #eee; display: flex; align-items: center; justify-content: center;
@@ -148,9 +150,20 @@
 
 <p class="info">Contributions to this wallet support and grow businesses.</p>
 
-<h2>Recent Supporters</h2>
-<div class="supporters" id="supporters">
-  <div class="supporter-card">No recent supporters yet.</div>
+<div class="sections-container">
+  <div>
+    <h2>Recent Supporters</h2>
+    <div class="supporters" id="supporters">
+      <div class="supporter-card">No recent supporters yet.</div>
+    </div>
+  </div>
+
+  <div>
+    <h2>Top Supporters</h2>
+    <div class="leaderboard" id="leaderboard">
+      <div class="leader-card">No data yet.</div>
+    </div>
+  </div>
 </div>
 
 <p class="info">Interested in what I've built here? Send me a message on X.</p>
@@ -172,6 +185,7 @@ function copyAddress(el) {
 let balances = { btc: 0.5, eth: 2.1 };
 let prices = { btc: 30000, eth: 2000 };
 let supporters = [];
+let leaderData = {};  // accumulate total tips per supporter
 
 function formatBalance(val) {
   return parseFloat(val).toFixed(6).replace(/\.?0+$/, '');
@@ -195,6 +209,23 @@ function updateDisplay() {
   } else {
     container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
   }
+
+  const leaderContainer = document.getElementById("leaderboard");
+  leaderContainer.innerHTML = "";
+  let sorted = Object.entries(leaderData)
+    .sort((a,b) => b[1].totalUsd - a[1].totalUsd)
+    .slice(0,6);
+
+  if(sorted.length){
+    sorted.forEach(([addr, data])=>{
+      const div = document.createElement("div");
+      div.className = "leader-card";
+      div.textContent = `${addr} (${data.total.toFixed(6)} ${data.coin}) ≈ $${data.totalUsd.toFixed(2)}`;
+      leaderContainer.appendChild(div);
+    });
+  } else {
+    leaderContainer.innerHTML = `<div class="leader-card">No data yet.</div>`;
+  }
 }
 
 function simulateDonation() {
@@ -205,18 +236,23 @@ function simulateDonation() {
   if (isBtc) {
     balances.btc += amount;
     supporters.unshift(`${addr} tipped ${amount.toFixed(6)} BTC`);
+    if (!leaderData[addr]) leaderData[addr] = { total: 0, totalUsd: 0, coin: 'BTC' };
+    leaderData[addr].total += amount;
+    leaderData[addr].totalUsd += amount * prices.btc;
   } else {
     balances.eth += amount;
     supporters.unshift(`${addr} tipped ${amount.toFixed(6)} ETH`);
+    if (!leaderData[addr]) leaderData[addr] = { total: 0, totalUsd: 0, coin: 'ETH' };
+    leaderData[addr].total += amount;
+    leaderData[addr].totalUsd += amount * prices.eth;
   }
 
   if (supporters.length > 6) supporters.pop();
-
   updateDisplay();
   confetti();
 }
 
-// Start the loop
+// start the loop
 setInterval(simulateDonation, 4000);
 updateDisplay();
 </script>
