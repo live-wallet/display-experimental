@@ -98,12 +98,21 @@
 
   .leaderboards {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 30px;
+    gap: 20px;
     width: 100%;
     max-width: 800px;
     margin-top: 20px;
+  }
+
+  .leaderboard-container {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .supporters, .leaderboard {
@@ -170,13 +179,13 @@
 </div>
 
 <div class="leaderboards">
-  <div>
+  <div class="leaderboard-container">
     <h2>Top Bitcoin Supporters</h2>
     <div class="leaderboard" id="btcLeaderboard">
       <div class="leader-card">No data yet.</div>
     </div>
   </div>
-  <div>
+  <div class="leaderboard-container">
     <h2>Top Ethereum Supporters</h2>
     <div class="leaderboard" id="ethLeaderboard">
       <div class="leader-card">No data yet.</div>
