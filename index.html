@@ -6,12 +6,6 @@
 <title>Wallet Demo</title>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
-  :root {
-    --fs-base: clamp(0.9rem, 2.5vw, 1rem);
-    --fs-balance: clamp(1.1rem, 4vw, 1.4rem);
-    --fs-h2: clamp(1.2rem, 5vw, 1.4rem);
-  }
-
   body {
     font-family: Arial, sans-serif;
     background: #fff;
@@ -23,9 +17,7 @@
     margin: 0;
     padding: 20px;
     color: #333;
-    font-size: var(--fs-base);
   }
-
   .header {
     display: flex;
     align-items: center;
@@ -39,10 +31,7 @@
     object-fit: cover;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
-  h1 {
-    font-size: 1.8em;
-    margin: 0;
-  }
+  h1 { font-size: 1.8em; margin: 0; }
 
   .wallets-container {
     display: flex;
@@ -52,7 +41,6 @@
     max-width: 400px;
     align-items: center;
   }
-
   .wallet {
     background: #fff;
     border-radius: 12px;
@@ -64,10 +52,9 @@
     max-width: 300px;
   }
   .wallet:hover { transform: translateY(-2px); }
-
-  .balance {
-    font-size: var(--fs-balance);
-    font-weight: bold;
+  .balance { 
+    font-size: clamp(1em, 2.5vw, 1.3em); 
+    font-weight: bold; 
     margin-bottom: 6px;
   }
 
@@ -101,19 +88,14 @@
     opacity: 0; transition: opacity 0.2s;
   }
 
-  .info {
-    max-width: 400px; margin-top: 25px;
-    font-size: var(--fs-base); color: #444;
+  .info { max-width: 400px; margin-top: 25px; font-size: 0.95em; color: #444; }
+  h2 { 
+    font-size: clamp(1.2em, 3vw, 1.4em);
+    margin: 30px 0 15px; 
+    color: #333; 
   }
 
-  h2 {
-    font-size: var(--fs-h2);
-    margin: 30px 0 15px;
-    color: #333;
-  }
-
-  .sections-container,
-  .leaderboards {
+  .sections-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -122,20 +104,30 @@
     max-width: 800px;
   }
 
+  .leaderboards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 800px;
+    margin-top: 20px;
+  }
+
   .supporters, .leaderboard {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    flex: 1 1 45%;
-    min-width: 160px;
-    max-width: 350px;
+    width: 100%;
+    max-width: 360px;
   }
 
   .supporter-card, .leader-card {
     background: #f9f9f9; padding: 8px 14px;
     border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    font-size: var(--fs-base); white-space: nowrap; transition: all 0.3s;
+    font-size: clamp(0.85em, 2.5vw, 0.95em);
+    white-space: nowrap; transition: all 0.3s;
   }
 
   .contact-circle {
