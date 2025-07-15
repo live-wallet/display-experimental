@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wallet Demo</title>
+<title>Wallet Balance</title>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
   body {
@@ -31,8 +31,10 @@
     object-fit: cover;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
-  h1 { font-size: 1.8em; margin: 0; }
-
+  h1 {
+    font-size: 1.8em;
+    margin: 0;
+  }
   .wallets-container {
     display: flex;
     flex-direction: column;
@@ -52,88 +54,105 @@
     max-width: 300px;
   }
   .wallet:hover { transform: translateY(-2px); }
-  .balance { 
-    font-size: clamp(1em, 2.5vw, 1.3em); 
-    font-weight: bold; 
+  .balance {
+    font-size: 1.3em;
+    font-weight: bold;
     margin-bottom: 6px;
   }
-
   .copy-circle {
-    width: 45px; height: 45px; border-radius: 50%;
-    background: #eee; display: flex; align-items: center; justify-content: center;
-    margin: 10px auto 0; cursor: pointer; position: relative;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto 0;
+    cursor: pointer;
+    position: relative;
   }
   .copy-circle:hover { background: #ddd; }
-  .btc-icon { font-size: 1.5em;}
-  .eth-icon { font-size: 1.4em;}
-
+  .btc-icon, .eth-icon { width: 30px; height: 30px; }
   .tooltip {
-    position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
-    background: rgba(240,240,240,0.95); color: #333;
-    padding: 3px 6px; border-radius: 4px; font-size: 0.7em;
-    white-space: nowrap; opacity: 0; visibility: hidden;
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(240,240,240,0.95);
+    color: #333;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 0.7em;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     transition: opacity 0.2s;
   }
   .tooltip::after {
-    content: ''; position: absolute; top: 100%; left: 50%;
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
     transform: translateX(-50%);
-    border-width: 4px; border-style: solid;
+    border-width: 4px;
+    border-style: solid;
     border-color: rgba(240,240,240,0.95) transparent transparent transparent;
   }
-  .copy-circle:hover .tooltip {opacity: 1; visibility: visible;}
+  .copy-circle:hover .tooltip { opacity: 1; visibility: visible; }
   .copied-msg {
-    position: absolute; bottom: -18px; left: 50%;
-    transform: translateX(-50%); font-size: 0.75em; color: #444;
-    opacity: 0; transition: opacity 0.2s;
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75em;
+    color: #444;
+    opacity: 0;
+    transition: opacity 0.2s;
   }
-
-  .info { max-width: 400px; margin-top: 25px; font-size: 0.95em; color: #444; }
-  h2 { 
-    font-size: clamp(1.2em, 3vw, 1.4em);
-    margin: 30px 0 15px; 
-    color: #333; 
+  .info {
+    max-width: 400px;
+    margin-top: 25px;
+    font-size: 0.95em;
+    color: #444;
   }
-
-  .sections-container {
+  h2 {
+    font-size: 1.4em;
+    margin: 30px 0 15px;
+    color: #333;
+  }
+  .supporters, .ventures {
+    max-width: 800px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 30px;
-    width: 100%;
-    max-width: 800px;
-  }
-
-  .leaderboards {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    width: 100%;
-    max-width: 800px;
-    margin-top: 20px;
-  }
-
-  .supporters, .leaderboard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     gap: 10px;
-    width: 100%;
-    max-width: 360px;
+    justify-content: center;
   }
-
-  .supporter-card, .leader-card {
-    background: #f9f9f9; padding: 8px 14px;
-    border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    font-size: clamp(0.85em, 2.5vw, 0.95em);
-    white-space: nowrap; transition: all 0.3s;
+  .supporter-card, .venture-card {
+    background: #f9f9f9;
+    padding: 8px 14px;
+    border-radius: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    font-size: 0.9em;
+    white-space: nowrap;
+    transition: all 0.3s;
   }
-
+  .venture-card {
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 0.95em;
+  }
   .contact-circle {
-    margin-top: 30px; width: 50px; height: 50px; border-radius: 50%;
-    background: #eee; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1); transition: background 0.2s;
+    margin-top: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    transition: background 0.2s;
   }
   .contact-circle:hover { background: #ddd; }
   .contact-circle svg { fill: #000; width: 20px; height: 20px; }
@@ -148,20 +167,20 @@
 
 <div class="wallets-container">
   <div class="wallet">
-    <div class="balance" id="btcBalance">0 BTC ≈ $0.00</div>
+    <div class="balance" id="btcBalance">Loading...</div>
     <div>Bitcoin</div>
-    <div class="copy-circle" onclick="copyAddress(this)" data-address="fakebtcaddress">
+    <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1...">
       <div class="tooltip">Copy Bitcoin address</div>
-      <div class="btc-icon">₿</div>
+      <svg class="btc-icon" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#eee"/><path fill="#343434" d="..."/></svg>
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
   <div class="wallet">
-    <div class="balance" id="ethBalance">0 ETH ≈ $0.00</div>
+    <div class="balance" id="ethBalance">Loading...</div>
     <div>Ethereum</div>
-    <div class="copy-circle" onclick="copyAddress(this)" data-address="fakeethaddress">
+    <div class="copy-circle" onclick="copyAddress(this)" data-address="0x...">
       <div class="tooltip">Copy Ethereum address</div>
-      <div class="eth-icon">Ξ</div>
+      <svg class="eth-icon" viewBox="0 0 256 417"><polygon fill="#343434" points="..."/></svg>
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
@@ -169,28 +188,17 @@
 
 <p class="info">Contributions to this wallet support and grow businesses.</p>
 
-<div class="sections-container">
-  <div>
-    <h2>Recent Supporters</h2>
-    <div class="supporters" id="supporters">
-      <div class="supporter-card">No recent supporters yet.</div>
-    </div>
-  </div>
+<h2>Recent Supporters</h2>
+<div class="supporters" id="supporters">
+  <div class="supporter-card">Loading supporters...</div>
 </div>
 
-<div class="leaderboards">
-  <div>
-    <h2>Top Bitcoin Supporters</h2>
-    <div class="leaderboard" id="btcLeaderboard">
-      <div class="leader-card">No data yet.</div>
-    </div>
-  </div>
-  <div>
-    <h2>Top Ethereum Supporters</h2>
-    <div class="leaderboard" id="ethLeaderboard">
-      <div class="leader-card">No data yet.</div>
-    </div>
-  </div>
+<h2>Funded Ventures</h2>
+<div class="ventures" id="ventures">
+  <div class="venture-card">Building SaaS tools 🚀</div>
+  <div class="venture-card">Launching small e-commerce 🌿</div>
+  <div class="venture-card">Developing micro apps 📱</div>
+  <div class="venture-card">Marketing services 📈</div>
 </div>
 
 <p class="info">Interested in what I've built here? Send me a message on X.</p>
@@ -209,88 +217,21 @@ function copyAddress(el) {
   });
 }
 
-let balances = { btc: 0.5, eth: 2.1 };
-let prices = { btc: 30000, eth: 2000 };
-let supporters = [];
-let btcLeaders = {};
-let ethLeaders = {};
-
-function formatBalance(val) {
-  return parseFloat(val).toFixed(6).replace(/\.?0+$/, '');
-}
-
-function updateDisplay() {
-  document.getElementById("btcBalance").textContent = 
-    `${formatBalance(balances.btc)} BTC ≈ $${(balances.btc * prices.btc).toFixed(2)}`;
-  document.getElementById("ethBalance").textContent = 
-    `${formatBalance(balances.eth)} ETH ≈ $${(balances.eth * prices.eth).toFixed(2)}`;
-
+// dummy supporters loader
+setTimeout(() => {
+  const supporters = [
+    { address: 'bc1q4...', amount: '0.002 BTC' },
+    { address: '0xb96...', amount: '0.01 ETH' }
+  ];
   const container = document.getElementById("supporters");
   container.innerHTML = "";
-  if(supporters.length) {
-    supporters.forEach(sup => {
-      const card = document.createElement("div");
-      card.className = "supporter-card";
-      card.textContent = sup;
-      container.appendChild(card);
-    });
-  } else {
-    container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
-  }
-
-  const btcBoard = document.getElementById("btcLeaderboard");
-  btcBoard.innerHTML = "";
-  let sortedBtc = Object.entries(btcLeaders)
-    .sort((a,b) => b[1] - a[1]).slice(0,6);
-  if(sortedBtc.length){
-    sortedBtc.forEach(([addr, total])=>{
-      const div = document.createElement("div");
-      div.className = "leader-card";
-      div.textContent = `${addr} (${total.toFixed(6)} BTC)`;
-      btcBoard.appendChild(div);
-    });
-  } else {
-    btcBoard.innerHTML = `<div class="leader-card">No data yet.</div>`;
-  }
-
-  const ethBoard = document.getElementById("ethLeaderboard");
-  ethBoard.innerHTML = "";
-  let sortedEth = Object.entries(ethLeaders)
-    .sort((a,b) => b[1] - a[1]).slice(0,6);
-  if(sortedEth.length){
-    sortedEth.forEach(([addr, total])=>{
-      const div = document.createElement("div");
-      div.className = "leader-card";
-      div.textContent = `${addr} (${total.toFixed(6)} ETH)`;
-      ethBoard.appendChild(div);
-    });
-  } else {
-    ethBoard.innerHTML = `<div class="leader-card">No data yet.</div>`;
-  }
-}
-
-function simulateDonation() {
-  const isBtc = Math.random() < 0.5;
-  const amount = isBtc ? (Math.random() * 0.01 + 0.0001) : (Math.random() * 0.02 + 0.0002);
-  const addr = Math.random().toString(36).substring(2,8) + "..." + Math.random().toString(36).substring(2,6);
-
-  if (isBtc) {
-    balances.btc += amount;
-    supporters.unshift(`${addr} tipped ${amount.toFixed(6)} BTC`);
-    btcLeaders[addr] = (btcLeaders[addr] || 0) + amount;
-  } else {
-    balances.eth += amount;
-    supporters.unshift(`${addr} tipped ${amount.toFixed(6)} ETH`);
-    ethLeaders[addr] = (ethLeaders[addr] || 0) + amount;
-  }
-
-  if (supporters.length > 6) supporters.pop();
-  updateDisplay();
-  confetti();
-}
-
-setInterval(simulateDonation, 4000);
-updateDisplay();
+  supporters.forEach(sup => {
+    const card = document.createElement("div");
+    card.className = "supporter-card";
+    card.textContent = `${sup.address} tipped ${sup.amount}`;
+    container.appendChild(card);
+  });
+}, 1000);
 </script>
 </body>
 </html>
