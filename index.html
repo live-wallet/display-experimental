@@ -269,12 +269,17 @@
   <div class="wallet">
     <div class="balance" id="btcBalance">Loading...</div>
     <div>Bitcoin</div>
+    <div>Bitcoin</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
       <div class="tooltip">Copy Bitcoin address</div>
-      <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=026" class="btc-icon" alt="BTC">
+      <svg class="btc-icon" viewBox="0 0 32 32">
+        <circle cx="16" cy="16" r="16" fill="#eee"/>
+        <path fill="#343434" d="M20.192 14.56c.308-2.062-1.264-3.176-3.42-3.91l.698-2.8-1.704-.423-.68 2.727c-.448-.112-.908-.218-1.36-.324l.685-2.74-1.704-.423-.698 2.8c-.368-.085-.73-.17-1.084-.259l.002-.009-2.35-.584-.453 1.815s1.264.29 1.238.309c.691.172.815.63.793.993l-.79 3.166c.047.012.107.03.173.058l-.174-.043-1.106 4.43c-.084.208-.297.52-.778.402.017.024-1.24-.309-1.24-.309l-.845 1.947 2.215.552c.41.102.814.21 1.214.313l-.705 2.832 1.703.423.698-2.802c.462.125.91.242 1.348.353l-.693 2.78 1.704.423.705-2.832c2.909.551 5.094.328 6.021-2.305.742-2.112-.037-3.332-1.566-4.127 1.113-.257 1.951-.988 2.175-2.497zm-3.893 5.44c-.527 2.112-4.09.972-5.24.684l.934-3.746c1.15.287 4.854.855 4.306 3.062zm.53-5.462c-.48 1.924-3.442.945-4.401.705l.847-3.4c.959.24 4.05.687 3.554 2.695z"/>
+      </svg>
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
+    
 
   <!-- ETH Wallet -->
   <div class="wallet">
@@ -282,7 +287,14 @@
     <div>Ethereum</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
       <div class="tooltip">Copy Ethereum address</div>
-      <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png?v=026" class="eth-icon" alt="ETH">
+      <svg class="eth-icon" viewBox="0 0 256 417">
+        <polygon fill="#343434" points="127.9,0 125.1,9.3 125.1,279.4 127.9,282.1 255.8,208.4 "/>
+        <polygon fill="#8C8C8C" points="127.9,0 0,208.4 127.9,282.1 127.9,150.1 "/>
+        <polygon fill="#3C3C3B" points="127.9,307.2 126.3,308.8 126.3,414.8 127.9,417 255.9,232.8 "/>
+        <polygon fill="#8C8C8C" points="127.9,417 127.9,307.2 0,232.8 "/>
+        <polygon fill="#141414" points="127.9,282.1 255.8,208.4 127.9,150.1 "/>
+        <polygon fill="#393939" points="0,208.4 127.9,282.1 127.9,150.1 "/>
+      </svg>
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
