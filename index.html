@@ -12,10 +12,17 @@
       padding: 0;
       color: #333;
     }
+
+    /* Header Bar */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
     .top-left {
-      position: absolute;
-      top: 20px;
-      left: 20px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -31,14 +38,13 @@
       font-size: 1.8em;
       margin: 0;
     }
+
     .top-right {
-      position: absolute;
-      top: 20px;
-      right: 20px;
       display: flex;
       align-items: center;
       gap: 20px;
     }
+
     .top-right .ventures-link-circle,
     .top-right .about-link {
       cursor: pointer;
@@ -61,23 +67,26 @@
       height: 22px;
       fill: #000;
     }
+
     .ventures-popup {
       display: none;
       position: absolute;
-      top: 60px;
-      right: 20px;
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       padding: 12px 16px;
       z-index: 100;
+      top: 80px;
+      right: 20px;
       flex-direction: column;
       gap: 6px;
     }
+
     .ventures-popup h3 {
       margin: 0 0 10px;
       font-size: 1em;
     }
+
     .venture-item {
       font-size: 0.9em;
       color: #333;
@@ -88,9 +97,10 @@
       flex-direction: column;
       gap: 15px;
       max-width: 400px;
-      margin: 140px auto 0;
+      margin: 0 auto;
       align-items: center;
     }
+
     .wallet {
       background: #fff;
       border-radius: 12px;
@@ -218,33 +228,36 @@
 </head>
 <body>
 
-  <div class="top-left">
-    <img src="https://unavatar.io/x/qazwsxz12" alt="Profile picture">
-    <h1>Wallet</h1>
+  <!-- Top Bar (not fixed) -->
+  <div class="header-bar">
+    <div class="top-left">
+      <img src="https://unavatar.io/x/qazwsxz12" alt="Profile picture" />
+      <h1>Wallet</h1>
+    </div>
+    <div class="top-right">
+      <div class="ventures-link-circle" onclick="toggleVentures()">
+        <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1    
+          0-2 .9-2 2v2H4c-1.1 0-2     
+          .9-2 2v12c0 1.1.9 2     
+          2 2h16c1.1 0 2-.9     
+          2-2V8c0-1.1-.9-2-2-2zM10     
+          4h4v2h-4V4zm10 16H4V8h16v12z"/></svg>
+      </div>
+      <div class="about-link" onclick="window.location='https://x.com/qazwsxz12'" title="About">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
+          10-4.48 10-10S17.52 2 12 2zm0
+          18c-4.41 0-8-3.59-8-8s3.59-8
+          8-8 8 3.59 8 8-3.59 8-8
+          8zm-1-13h2v2h-2zm0 4h2v6h-2z"/></svg>
+      </div>
+    </div>
   </div>
 
-  <div class="top-right">
-    <div class="ventures-link-circle" onclick="toggleVentures()">
-      <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1    
-        0-2 .9-2 2v2H4c-1.1 0-2     
-        .9-2 2v12c0 1.1.9 2     
-        2 2h16c1.1 0 2-.9     
-        2-2V8c0-1.1-.9-2-2-2zM10     
-        4h4v2h-4V4zm10 16H4V8h16v12z"/></svg>
-    </div>
-    <div class="about-link" onclick="window.location='https://x.com/qazwsxz12'" title="About">
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
-        10-4.48 10-10S17.52 2 12 2zm0
-        18c-4.41 0-8-3.59-8-8s3.59-8
-        8-8 8 3.59 8 8-3.59 8-8
-        8zm-1-13h2v2h-2zm0 4h2v6h-2z"/></svg>
-    </div>
-    <div class="ventures-popup" id="venturesPopup">
-      <h3>Funded Ventures</h3>
-      <div class="venture-item">Coffee Roastery Startup</div>
-      <div class="venture-item">AI Writing SaaS</div>
-      <div class="venture-item">Eco-friendly Packaging</div>
-    </div>
+  <div class="ventures-popup" id="venturesPopup">
+    <h3>Funded Ventures</h3>
+    <div class="venture-item">Coffee Roastery Startup</div>
+    <div class="venture-item">AI Writing SaaS</div>
+    <div class="venture-item">Eco-friendly Packaging</div>
   </div>
 
   <div class="wallets-container">
@@ -318,7 +331,7 @@
                 `${formatBalance(btc)} BTC ≈ $${(btc*prices.btc).toFixed(2)}`;
             });
 
-          fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+          fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=YourApiKey`)
             .then(res => res.json())
             .then(data => {
               const eth = parseInt(data.result) / 1e18;
