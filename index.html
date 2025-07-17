@@ -1,233 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wallet Balance</title>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #fff;
-    margin: 0;
-    padding: 20px;
-    color: #333;
-  }
-  .top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-  }
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .header img {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  h1 {
-    font-size: 1.8em;
-    margin: 0;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wallet Balance</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
 
-  .top-actions {
-    display: flex;
-    gap: 10px;
-  }
-  .top-circle {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #eee;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    transition: background 0.2s;
-  }
-  .top-circle:hover {
-    background: #ddd;
-  }
-  .top-circle svg {
-    width: 18px;
-    height: 18px;
-    fill: #000;
-  }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
 
-  .wallets-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-    max-width: 400px;
-    align-items: center;
-    margin: auto;
-  }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-  .wallet {
-    background: #fff;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    transition: transform 0.2s;
-    position: relative;
-    width: 100%;
-    max-width: 300px;
-  }
-  .wallet:hover {
-    transform: translateY(-2px);
-  }
+    .header img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
 
-  .balance {
-    font-size: 1.3em;
-    font-weight: bold;
-    margin-bottom: 6px;
-  }
+    h1 {
+      font-size: 1.8em;
+      margin: 0;
+    }
 
-  .copy-circle {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: #eee;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px auto 0;
-    cursor: pointer;
-    position: relative;
-  }
-  .copy-circle:hover {
-    background: #ddd;
-  }
+    .top-actions {
+      display: flex;
+      gap: 10px;
+    }
 
-  .btc-icon {
-    width: 30px;
-    height: 30px;
-    transform: translateX(2px);
-  }
+    .top-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      transition: background 0.2s;
+    }
 
-  .eth-icon {
-    width: 24px;
-    height: 24px;
-  }
+    .top-circle:hover {
+      background: #ddd;
+    }
 
-  .tooltip {
-    position: absolute;
-    bottom: 120%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(240, 240, 240, 0.95);
-    color: #333;
-    padding: 3px 6px;
-    border-radius: 4px;
-    font-size: 0.7em;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: opacity 0.2s;
-  }
-  .tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 4px;
-    border-style: solid;
-    border-color: rgba(240,240,240,0.95) transparent transparent transparent;
-  }
-  .copy-circle:hover .tooltip {
-    opacity: 1;
-    visibility: visible;
-  }
+    .top-circle i {
+      font-size: 16px;
+      color: #333;
+    }
 
-  .copied-msg {
-    position: absolute;
-    bottom: -18px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.75em;
-    color: #444;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
+    #ventures {
+      max-width: 400px;
+      margin: 20px auto;
+      display: none;
+      background: #fafafa;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
 
-  .info {
-    max-width: 400px;
-    margin: 25px auto 0;
-    font-size: 0.95em;
-    color: #444;
-    text-align: center;
-  }
+    .wallets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      max-width: 400px;
+      align-items: center;
+      margin: auto;
+    }
 
-  h2 {
-    font-size: 1.4em;
-    margin: 30px 0 15px;
-    color: #333;
-    text-align: center;
-  }
+    .wallet {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+      position: relative;
+      width: 100%;
+      max-width: 300px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
-  .supporters {
-    max-width: 400px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin: auto;
-  }
+    .wallet:hover {
+      transform: translateY(-2px);
+    }
 
-  .supporter-card {
-    background: #f9f9f9;
-    padding: 8px 14px;
-    border-radius: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    font-size: 0.9em;
-    white-space: nowrap;
-    transition: all 0.3s;
-  }
+    .balance {
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
 
-  .contact-circle {
-    margin: 30px auto;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #eee;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    transition: background 0.2s;
-  }
+    .copy-circle {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px auto 0;
+      cursor: pointer;
+      position: relative;
+    }
 
-  .contact-circle:hover {
-    background: #ddd;
-  }
+    .copy-circle:hover {
+      background: #ddd;
+    }
 
-  .contact-circle svg {
-    fill: #000;
-    width: 20px;
-    height: 20px;
-  }
+    .btc-icon,
+    .eth-icon {
+      width: 28px;
+      height: 28px;
+    }
 
-  #ventures {
-    max-width: 400px;
-    margin: 20px auto;
-    display: none;
-    background: #fafafa;
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  }
-</style>
+    .tooltip {
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(240, 240, 240, 0.95);
+      color: #333;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 0.7em;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: opacity 0.2s;
+    }
+
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 4px;
+      border-style: solid;
+      border-color: rgba(240,240,240,0.95) transparent transparent transparent;
+    }
+
+    .copy-circle:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .copied-msg {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75em;
+      color: #444;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .info {
+      max-width: 400px;
+      margin: 25px auto 0;
+      font-size: 0.95em;
+      color: #444;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 1.4em;
+      margin: 30px 0 15px;
+      color: #333;
+      text-align: center;
+    }
+
+    .supporters {
+      max-width: 400px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: auto;
+    }
+
+    .supporter-card {
+      background: #f9f9f9;
+      padding: 8px 14px;
+      border-radius: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      font-size: 0.9em;
+      white-space: nowrap;
+      transition: all 0.3s;
+    }
+
+    .contact-circle {
+      margin: 30px auto;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      transition: background 0.2s;
+    }
+
+    .contact-circle:hover {
+      background: #ddd;
+    }
+
+    .contact-circle svg {
+      fill: #000;
+      width: 20px;
+      height: 20px;
+    }
+  </style>
 </head>
 <body>
 
@@ -238,14 +249,10 @@
   </div>
   <div class="top-actions">
     <div class="top-circle" onclick="toggleVentures()" title="Funded Ventures">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm1 14h-2v-2h2v2zm0-4h-2V8h2v7z"/>
-      </svg>
+      <i class="fas fa-briefcase"></i>
     </div>
-    <div class="top-circle" onclick="location.href='about.html'" title="About Page">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 0a12 12 0 100 24A12 12 0 0012 0zm1 18h-2v-2h2v2zm1.1-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1 .45-1.9 1.17-2.58l1.24-1.26A2 2 0 1011 8H9a4 4 0 118 0c0 .88-.36 1.68-.9 2.25z"/>
-      </svg>
+    <div class="top-circle" onclick="location.href='about.html'" title="About">
+      <i class="fas fa-info-circle"></i>
     </div>
   </div>
 </div>
@@ -258,29 +265,24 @@
 </div>
 
 <div class="wallets-container">
-  <!-- BTC -->
+  <!-- BTC Wallet -->
   <div class="wallet">
     <div class="balance" id="btcBalance">Loading...</div>
     <div>Bitcoin</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
       <div class="tooltip">Copy Bitcoin address</div>
-      <svg class="btc-icon" viewBox="0 0 32 32">
-        <circle cx="16" cy="16" r="16" fill="#eee"/>
-        <path fill="#343434" d="..."/>
-      </svg>
+      <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=026" class="btc-icon" alt="BTC">
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
 
-  <!-- ETH -->
+  <!-- ETH Wallet -->
   <div class="wallet">
     <div class="balance" id="ethBalance">Loading...</div>
     <div>Ethereum</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
       <div class="tooltip">Copy Ethereum address</div>
-      <svg class="eth-icon" viewBox="0 0 256 417">
-        <polygon fill="#343434" points="..."/>
-      </svg>
+      <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png?v=026" class="eth-icon" alt="ETH">
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
@@ -328,73 +330,72 @@ function formatBalance(val) {
 function updateWalletData() {
   let prices = {};
   fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd')
-  .then(res => res.json())
-  .then(data => {
-    prices.btc = data.bitcoin.usd;
-    prices.eth = data.ethereum.usd;
+    .then(res => res.json())
+    .then(data => {
+      prices.btc = data.bitcoin.usd;
+      prices.eth = data.ethereum.usd;
 
-    fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
-      .then(res => res.text())
-      .then(sats => {
-        const btc = parseInt(sats) / 100000000;
-        document.getElementById("btcBalance").textContent = 
-          `${formatBalance(btc)} BTC ≈ $${(btc*prices.btc).toFixed(2)}`;
-      });
+      fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
+        .then(res => res.text())
+        .then(sats => {
+          const btc = parseInt(sats) / 1e8;
+          document.getElementById("btcBalance").textContent =
+            `${formatBalance(btc)} BTC ≈ $${(btc * prices.btc).toFixed(2)}`;
+        });
 
-    fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=YourApiKey`)
-      .then(res => res.json())
-      .then(data => {
-        const eth = parseInt(data.result) / 1e18;
-        document.getElementById("ethBalance").textContent = 
-          `${formatBalance(eth)} ETH ≈ $${(eth*prices.eth).toFixed(2)}`;
-      });
+      fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+        .then(res => res.json())
+        .then(data => {
+          const eth = parseInt(data.result) / 1e18;
+          document.getElementById("ethBalance").textContent =
+            `${formatBalance(eth)} ETH ≈ $${(eth * prices.eth).toFixed(2)}`;
+        });
 
-    Promise.all([
-      fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r=>r.json()).catch(()=>null),
-      fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=YourApiKey`)
-        .then(r=>r.json()).catch(()=>null)
-    ]).then(([btcData, ethData])=>{
-      let supporters = [];
-      if(btcData && btcData.txs){
-        btcData.txs.slice(0,4).forEach(tx=>{
-          tx.inputs.forEach(inp=>{
-            let val = inp.prev_out.value/1e8;
-            supporters.push({
-              address: inp.prev_out.addr,
-              amount: `${formatBalance(val)} BTC`
+      Promise.all([
+        fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r => r.json()).catch(() => null),
+        fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+          .then(r => r.json()).catch(() => null)
+      ]).then(([btcData, ethData]) => {
+        let supporters = [];
+        if (btcData && btcData.txs) {
+          btcData.txs.slice(0, 4).forEach(tx => {
+            tx.inputs.forEach(inp => {
+              let val = inp.prev_out.value / 1e8;
+              supporters.push({
+                address: inp.prev_out.addr,
+                amount: `${formatBalance(val)} BTC`
+              });
             });
           });
-        });
-      }
-      if(ethData && ethData.result){
-        ethData.result.slice(0,4).forEach(tx=>{
-          if(tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e"){
-            let val = parseInt(tx.value)/1e18;
-            supporters.push({
-              address: tx.from,
-              amount: `${formatBalance(val)} ETH`
-            });
-          }
-        });
-      }
+        }
+        if (ethData && ethData.result) {
+          ethData.result.slice(0, 4).forEach(tx => {
+            if (tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e") {
+              let val = parseInt(tx.value) / 1e18;
+              supporters.push({
+                address: tx.from,
+                amount: `${formatBalance(val)} ETH`
+              });
+            }
+          });
+        }
 
-      const container = document.getElementById("supporters");
-      container.innerHTML = "";
-      if(supporters.length){
-        supporters.slice(0,4).forEach(sup=>{
-          const card = document.createElement("div");
-          card.className = "supporter-card";
-          card.textContent = `${sup.address.slice(0,6)}...${sup.address.slice(-4)} tipped ${sup.amount}`;
-          container.appendChild(card);
-        });
-      } else {
-        container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
-      }
+        const container = document.getElementById("supporters");
+        container.innerHTML = "";
+        if (supporters.length) {
+          supporters.slice(0, 4).forEach(sup => {
+            const card = document.createElement("div");
+            card.className = "supporter-card";
+            card.textContent = `${sup.address.slice(0, 6)}...${sup.address.slice(-4)} tipped ${sup.amount}`;
+            container.appendChild(card);
+          });
+        } else {
+          container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
+        }
+      });
     });
-  });
 }
 
-// Load and refresh
 updateWalletData();
 setInterval(updateWalletData, 60000);
 </script>
