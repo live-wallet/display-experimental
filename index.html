@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Wallet Balance</title>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- Font Awesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-KY4y3QH6OIJUcS+79pXzHkYB9DxD5Pb6lO8xC12aJf7CU6oJYVmUnjIC7X4ltAiG0sOulU6evLsh6zHvWv/XNg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <style>
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+  <meta charset="UTF-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+  <title>Wallet Balance</title>  
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  
+  <style>  
     body {
       font-family: Arial, sans-serif;
       background: #fff;
@@ -167,142 +165,142 @@
       width: 20px;
       height: 20px;
     }
-  </style>
-</head>
-<body>
-
-<div class="header">
-  <img src="https://unavatar.io/x/qazwsxz12" alt="Profile picture">
-  <h1>Wallet</h1>
-</div>
-
-<div class="wallets-container">
-  <div class="wallet">
-    <div class="balance" id="btcBalance">Loading...</div>
-    <div>Bitcoin</div>
-    <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
-      <div class="tooltip">Copy Bitcoin address</div>
-      <i class="fab fa-bitcoin"></i>
-    </div>
-    <div class="copied-msg">Copied!</div>
-  </div>
-
-  <div class="wallet">
-    <div class="balance" id="ethBalance">Loading...</div>
-    <div>Ethereum</div>
-    <div class="copy-circle" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
-      <div class="tooltip">Copy Ethereum address</div>
-      <i class="fab fa-ethereum"></i>
-    </div>
-    <div class="copied-msg">Copied!</div>
-  </div>
-</div>
-
-<p class="info">
-  Contributions to this wallet support and grow businesses.
-</p>
-
-<h2>Recent Supporters</h2>
-<div class="supporters" id="supporters">
-  <div class="supporter-card">Loading supporters...</div>
-</div>
-
-<p class="info">
-  Interested in what I've built here? Send me a message on X.
-</p>
-
-<div class="contact-circle">
-  <a href="https://x.com/qazwsxz12" target="_blank">
-    <svg viewBox="0 0 24 24">
-      <path d="M4.5 3h4.9l3.6 5.2 3.6-5.2h4.9l-6.5 9.3 7 10.7h-5l-4.5-6.7-4.5 6.7h-5l7-10.7-6.5-9.3z"/>
-    </svg>
-  </a>
-</div>
-
-<script>
-function copyAddress(el) {
-  navigator.clipboard.writeText(el.getAttribute("data-address")).then(() => {
-    const msg = el.parentElement.querySelector('.copied-msg');
-    msg.style.opacity = 1;
-    setTimeout(() => msg.style.opacity = 0, 800);
-  });
-}
-
-function formatBalance(val) {
-  return parseFloat(val).toPrecision(6).replace(/\.?0+$/, '');
-}
-
-function updateWalletData() {
-  let prices = {};
-  fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd')
-  .then(res => res.json())
-  .then(data => {
-    prices.btc = data.bitcoin.usd;
-    prices.eth = data.ethereum.usd;
-
-    fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
-      .then(res => res.text())
-      .then(sats => {
-        const btc = parseInt(sats) / 100000000;
-        document.getElementById("btcBalance").textContent = 
-          `${formatBalance(btc)} BTC ≈ $${(btc*prices.btc).toFixed(2)}`;
-      });
-
-    fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
-      .then(res => res.json())
-      .then(data => {
-        const eth = parseInt(data.result) / 1e18;
-        document.getElementById("ethBalance").textContent = 
-          `${formatBalance(eth)} ETH ≈ $${(eth*prices.eth).toFixed(2)}`;
-      });
-
-    Promise.all([
-      fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r=>r.json()).catch(()=>null),
-      fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
-        .then(r=>r.json()).catch(()=>null)
-    ]).then(([btcData, ethData])=>{
-      let supporters = [];
-      if(btcData && btcData.txs){
-        btcData.txs.slice(0,4).forEach(tx=>{
-          tx.inputs.forEach(inp=>{
-            let val = inp.prev_out.value/1e8;
-            supporters.push({
-              address: inp.prev_out.addr,
-              amount: `${formatBalance(val)} BTC`
-            });
-          });
-        });
-      }
-      if(ethData && ethData.result){
-        ethData.result.slice(0,4).forEach(tx=>{
-          if(tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e"){
-            let val = parseInt(tx.value)/1e18;
-            supporters.push({
-              address: tx.from,
-              amount: `${formatBalance(val)} ETH`
-            });
-          }
-        });
-      }
-
-      const container = document.getElementById("supporters");
-      container.innerHTML = "";
-      if(supporters.length){
-        supporters.slice(0,4).forEach(sup=>{
-          const card = document.createElement("div");
-          card.className = "supporter-card";
-          card.textContent = `${sup.address.slice(0,6)}...${sup.address.slice(-4)} tipped ${sup.amount}`;
-          container.appendChild(card);
-        });
-      } else {
-        container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
-      }
-    });
-  });
-}
-
-updateWalletData();
-setInterval(updateWalletData, 60000);
-</script>
-</body>
+  </style>  
+</head>  
+<body>  
+  
+<div class="header">  
+  <img src="https://unavatar.io/x/qazwsxz12" alt="Profile picture">  
+  <h1>Wallet</h1>  
+</div>  
+  
+<div class="wallets-container">  
+  <div class="wallet">  
+    <div class="balance" id="btcBalance">Loading...</div>  
+    <div>Bitcoin</div>  
+    <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">  
+      <div class="tooltip">Copy Bitcoin address</div>  
+      <i class="fab fa-bitcoin"></i>  
+    </div>  
+    <div class="copied-msg">Copied!</div>  
+  </div>  
+  
+  <div class="wallet">  
+    <div class="balance" id="ethBalance">Loading...</div>  
+    <div>Ethereum</div>  
+    <div class="copy-circle" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">  
+      <div class="tooltip">Copy Ethereum address</div>  
+      <i class="fab fa-ethereum"></i>  
+    </div>  
+    <div class="copied-msg">Copied!</div>  
+  </div>  
+</div>  
+  
+<p class="info">  
+  Contributions to this wallet support and grow businesses.  
+</p>  
+  
+<h2>Recent Supporters</h2>  
+<div class="supporters" id="supporters">  
+  <div class="supporter-card">Loading supporters...</div>  
+</div>  
+  
+<p class="info">  
+  Interested in what I've built here? Send me a message on X.  
+</p>  
+  
+<div class="contact-circle">  
+  <a href="https://x.com/qazwsxz12" target="_blank">  
+    <svg viewBox="0 0 24 24">  
+      <path d="M4.5 3h4.9l3.6 5.2 3.6-5.2h4.9l-6.5 9.3 7 10.7h-5l-4.5-6.7-4.5 6.7h-5l7-10.7-6.5-9.3z"/>  
+    </svg>  
+  </a>  
+</div>  
+  
+<script>  
+function copyAddress(el) {  
+  navigator.clipboard.writeText(el.getAttribute("data-address")).then(() => {  
+    const msg = el.parentElement.querySelector('.copied-msg');  
+    msg.style.opacity = 1;  
+    setTimeout(() => msg.style.opacity = 0, 800);  
+  });  
+}  
+  
+function formatBalance(val) {  
+  return parseFloat(val).toPrecision(6).replace(/\.?0+$/, '');  
+}  
+  
+function updateWalletData() {  
+  let prices = {};  
+  fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd')  
+  .then(res => res.json())  
+  .then(data => {  
+    prices.btc = data.bitcoin.usd;  
+    prices.eth = data.ethereum.usd;  
+  
+    fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)  
+      .then(res => res.text())  
+      .then(sats => {  
+        const btc = parseInt(sats) / 100000000;  
+        document.getElementById("btcBalance").textContent =   
+          `${formatBalance(btc)} BTC ≈ $${(btc*prices.btc).toFixed(2)}`;  
+      });  
+  
+    fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)  
+      .then(res => res.json())  
+      .then(data => {  
+        const eth = parseInt(data.result) / 1e18;  
+        document.getElementById("ethBalance").textContent =   
+          `${formatBalance(eth)} ETH ≈ $${(eth*prices.eth).toFixed(2)}`;  
+      });  
+  
+    Promise.all([  
+      fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r=>r.json()).catch(()=>null),  
+      fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)  
+        .then(r=>r.json()).catch(()=>null)  
+    ]).then(([btcData, ethData])=>{  
+      let supporters = [];  
+      if(btcData && btcData.txs){  
+        btcData.txs.slice(0,4).forEach(tx=>{  
+          tx.inputs.forEach(inp=>{  
+            let val = inp.prev_out.value/1e8;  
+            supporters.push({  
+              address: inp.prev_out.addr,  
+              amount: `${formatBalance(val)} BTC`  
+            });  
+          });  
+        });  
+      }  
+      if(ethData && ethData.result){  
+        ethData.result.slice(0,4).forEach(tx=>{  
+          if(tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e"){  
+            let val = parseInt(tx.value)/1e18;  
+            supporters.push({  
+              address: tx.from,  
+              amount: `${formatBalance(val)} ETH`  
+            });  
+          }  
+        });  
+      }  
+  
+      const container = document.getElementById("supporters");  
+      container.innerHTML = "";  
+      if(supporters.length){  
+        supporters.slice(0,4).forEach(sup=>{  
+          const card = document.createElement("div");  
+          card.className = "supporter-card";  
+          card.textContent = `${sup.address.slice(0,6)}...${sup.address.slice(-4)} tipped ${sup.amount}`;  
+          container.appendChild(card);  
+        });  
+      } else {  
+        container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;  
+      }  
+    });  
+  });  
+}  
+  
+updateWalletData();  
+setInterval(updateWalletData, 60000);  
+</script>  
+</body>  
 </html>
