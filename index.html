@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Wallet Balance</title>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-ZW+4Wjmb0rMH+5ow8BNWHD+y8UmdRSpYxGqJ2oChX61q3qpO3i7QvliXzRQ9b3A0O7TnXWJTk7zO+Wx7rLDYVQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -80,7 +78,7 @@
       background: #ddd;
     }
     .btc-icon, .eth-icon {
-      font-size: 26px;
+      font-size: 24px;
       color: #343434;
     }
     .tooltip {
@@ -185,7 +183,7 @@
     <div>Bitcoin</div>
     <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
       <div class="tooltip">Copy Bitcoin address</div>
-      <i class="fab fa-bitcoin btc-icon"></i>
+      <i class="fab fa-btc btc-icon"></i>
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
@@ -238,75 +236,75 @@ function formatBalance(val) {
 function updateWalletData() {
   let prices = {};
   fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd')
-  .then(res => res.json())
-  .then(data => {
-    prices.btc = data.bitcoin.usd;
-    prices.eth = data.ethereum.usd;
+    .then(res => res.json())
+    .then(data => {
+      prices.btc = data.bitcoin.usd;
+      prices.eth = data.ethereum.usd;
 
-    fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
-      .then(res => res.text())
-      .then(sats => {
-        const btc = parseInt(sats) / 100000000;
-        document.getElementById("btcBalance").textContent = 
-          `${formatBalance(btc)} BTC ≈ $${(btc*prices.btc).toFixed(2)}`;
-      });
+      fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
+        .then(res => res.text())
+        .then(sats => {
+          const btc = parseInt(sats) / 100000000;
+          document.getElementById("btcBalance").textContent =
+            `${formatBalance(btc)} BTC ≈ $${(btc * prices.btc).toFixed(2)}`;
+        });
 
-    fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
-      .then(res => res.json())
-      .then(data => {
-        const eth = parseInt(data.result) / 1e18;
-        document.getElementById("ethBalance").textContent = 
-          `${formatBalance(eth)} ETH ≈ $${(eth*prices.eth).toFixed(2)}`;
-      });
+      fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+        .then(res => res.json())
+        .then(data => {
+          const eth = parseInt(data.result) / 1e18;
+          document.getElementById("ethBalance").textContent =
+            `${formatBalance(eth)} ETH ≈ $${(eth * prices.eth).toFixed(2)}`;
+        });
 
-    Promise.all([
-      fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r=>r.json()).catch(()=>null),
-      fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
-        .then(r=>r.json()).catch(()=>null)
-    ]).then(([btcData, ethData])=>{
-      let supporters = [];
-      if(btcData && btcData.txs){
-        btcData.txs.slice(0,4).forEach(tx=>{
-          tx.inputs.forEach(inp=>{
-            let val = inp.prev_out.value/1e8;
-            supporters.push({
-              address: inp.prev_out.addr,
-              amount: `${formatBalance(val)} BTC`
+      Promise.all([
+        fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r => r.json()).catch(() => null),
+        fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+          .then(r => r.json()).catch(() => null)
+      ]).then(([btcData, ethData]) => {
+        let supporters = [];
+        if (btcData && btcData.txs) {
+          btcData.txs.slice(0, 4).forEach(tx => {
+            tx.inputs.forEach(inp => {
+              let val = inp.prev_out.value / 1e8;
+              supporters.push({
+                address: inp.prev_out.addr,
+                amount: `${formatBalance(val)} BTC`
+              });
             });
           });
-        });
-      }
-      if(ethData && ethData.result){
-        ethData.result.slice(0,4).forEach(tx=>{
-          if(tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e"){
-            let val = parseInt(tx.value)/1e18;
-            supporters.push({
-              address: tx.from,
-              amount: `${formatBalance(val)} ETH`
-            });
-          }
-        });
-      }
+        }
+        if (ethData && ethData.result) {
+          ethData.result.slice(0, 4).forEach(tx => {
+            if (tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e") {
+              let val = parseInt(tx.value) / 1e18;
+              supporters.push({
+                address: tx.from,
+                amount: `${formatBalance(val)} ETH`
+              });
+            }
+          });
+        }
 
-      const container = document.getElementById("supporters");
-      container.innerHTML = "";
-      if(supporters.length){
-        supporters.slice(0,4).forEach(sup=>{
-          const card = document.createElement("div");
-          card.className = "supporter-card";
-          card.textContent = `${sup.address.slice(0,6)}...${sup.address.slice(-4)} tipped ${sup.amount}`;
-          container.appendChild(card);
-        });
-      } else {
-        container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
-      }
+        const container = document.getElementById("supporters");
+        container.innerHTML = "";
+        if (supporters.length) {
+          supporters.slice(0, 4).forEach(sup => {
+            const card = document.createElement("div");
+            card.className = "supporter-card";
+            card.textContent = `${sup.address.slice(0, 6)}...${sup.address.slice(-4)} tipped ${sup.amount}`;
+            container.appendChild(card);
+          });
+        } else {
+          container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
+        }
+      });
     });
-  });
 }
 
-// load immediately and refresh every 60 seconds
 updateWalletData();
 setInterval(updateWalletData, 60000);
 </script>
+
 </body>
 </html>
