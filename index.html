@@ -36,39 +36,6 @@
       font-size: 1.8em;
       margin: 0;
     }
-    .top-actions {
-      display: flex;
-      gap: 10px;
-    }
-    .top-circle {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: #eee;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-      transition: background 0.2s;
-    }
-    .top-circle:hover {
-      background: #ddd;
-    }
-    .top-circle i {
-      font-size: 16px;
-      color: #333;
-    }
-    #ventures {
-      max-width: 400px;
-      margin: 20px auto;
-      display: none;
-      background: #fafafa;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-    }
     .wallets-container {
       display: flex;
       flex-direction: column;
@@ -115,11 +82,6 @@
     }
     .copy-circle:hover {
       background: #ddd;
-    }
-    .btc-icon,
-    .eth-icon {
-      width: 28px;
-      height: 28px;
     }
     .tooltip {
       position: absolute;
@@ -220,21 +182,6 @@
     <img id="profilePicture" src="" alt="Profile picture">
     <h1>Wallet</h1>
   </div>
-  <div class="top-actions">
-    <div class="top-circle" onclick="toggleVentures()" title="Funded Ventures">
-      <i class="fas fa-briefcase"></i>
-    </div>
-    <div class="top-circle" onclick="location.href='about.html'" title="About">
-      <i class="fas fa-info-circle"></i>
-    </div>
-  </div>
-</div>
-
-<div id="ventures">
-  <strong>Funded Ventures:</strong><br>
-  - Project Alpha<br>
-  - Startup B<br>
-  - App C
 </div>
 
 <div class="wallets-container">
@@ -292,11 +239,6 @@ const CONFIG = {
 document.getElementById("profilePicture").src = CONFIG.PROFILE_PICTURE;
 document.getElementById("btcCopy").dataset.address = CONFIG.BTC_ADDRESS;
 document.getElementById("ethCopy").dataset.address = CONFIG.ETH_ADDRESS;
-
-function toggleVentures() {
-  const section = document.getElementById("ventures");
-  section.style.display = section.style.display === "none" ? "block" : "none";
-}
 
 function copyAddress(el) {
   navigator.clipboard.writeText(el.getAttribute("data-address")).then(() => {
