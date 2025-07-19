@@ -3,167 +3,365 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tip Wallet</title>
-  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <title>Wallet Balance</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    :root {
-      --venmo-blue: #3d95ce;
-      --venmo-light: #e8f4fc;
-      --venmo-dark: #2d7bb8;
-      --text-color: #1a1a1a;
-      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
     body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-height: 100vh;
       margin: 0;
-      font-family: var(--font-family);
-      background-color: #f7f9fb;
-      color: var(--text-color);
       padding: 20px;
+      color: #333;
     }
-
     .header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 30px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
-
     .header img {
-      width: 64px;
-      height: 64px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      border: 2px solid var(--venmo-blue);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      object-fit: cover;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
-    .header h1 {
+    h1 {
       font-size: 1.8em;
-      color: var(--venmo-blue);
       margin: 0;
     }
-
-    .wallets {
+    .wallets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
       max-width: 400px;
-      margin: auto;
-      background: white;
+      align-items: center;
+    }
+    .wallet {
+      background: #fff;
       border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-
-    .wallets h2 {
-      font-size: 1.2em;
-      color: var(--venmo-dark);
-      text-align: center;
-    }
-
-    .tip-box {
-      margin: 20px 0;
       padding: 15px;
-      border-radius: 10px;
-      background-color: var(--venmo-light);
-      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+      position: relative;
+      width: 100%;
+      max-width: 300px;
     }
-
-    .tip-box h3 {
-      margin-bottom: 10px;
-      font-size: 1.1em;
+    .wallet:hover {
+      transform: translateY(-2px);
     }
-
-    .lightning-btn, .evm-btn {
-      background-color: var(--venmo-blue);
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 1em;
-      cursor: pointer;
+    .balance {
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .action-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
       margin-top: 10px;
+    }
+    .circle-btn {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
       transition: background 0.2s;
     }
-
-    .lightning-btn:hover, .evm-btn:hover {
-      background-color: var(--venmo-dark);
+    .circle-btn:hover {
+      background: #ddd;
     }
-
-    #qrCode {
-      margin: 10px auto;
-      width: 160px;
+    .btc-icon, .eth-icon {
+      font-size: 20px;
+      color: #343434;
     }
-
-    .footer {
-      margin-top: 40px;
-      text-align: center;
+    .tooltip {
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(240, 240, 240, 0.95);
+      color: #333;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 0.7em;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: opacity 0.2s;
+    }
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 4px;
+      border-style: solid;
+      border-color: rgba(240,240,240,0.95) transparent transparent transparent;
+    }
+    .circle-btn:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+    .copied-msg {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75em;
+      color: #444;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .info {
+      max-width: 400px;
+      margin-top: 25px;
+      font-size: 0.95em;
+      color: #444;
+    }
+    h2 {
+      font-size: 1.4em;
+      margin: 30px 0 15px;
+      color: #333;
+    }
+    .supporters {
+      max-width: 400px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .supporter-card {
+      background: #f9f9f9;
+      padding: 8px 14px;
+      border-radius: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       font-size: 0.9em;
-      color: #666;
+      white-space: nowrap;
+      transition: all 0.3s;
+    }
+    .contact-circle {
+      margin-top: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      transition: background 0.2s;
+    }
+    .contact-circle:hover {
+      background: #ddd;
+    }
+    .contact-circle svg {
+      fill: #000;
+      width: 20px;
+      height: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <img id="profilePicture" src="https://unavatar.io/x/fabledwool37" alt="Profile picture" />
-    <h1>Send a Tip</h1>
-  </div>
 
-  <div class="wallets">
-    <h2>Tip Options</h2>
+<div class="header">
+  <img src="https://unavatar.io/x/qazwsxz12" alt="Profile picture">
+  <h1>Wallet</h1>
+</div>
 
-    <div class="tip-box">
-      <h3>⚡ Lightning Tip</h3>
-      <div id="qrCode"></div>
-      <p><strong>Lightning Address:</strong><br> fabledwool37@walletofsatoshi.com</p>
-      <button class="lightning-btn" onclick="window.open('lightning:fabledwool37@walletofsatoshi.com', '_blank')">
-        Open in Wallet
-      </button>
+<div class="wallets-container">
+
+  <!-- Bitcoin Card -->
+  <div class="wallet">
+    <div class="balance" id="btcBalance">Loading...</div>
+    <div>Bitcoin</div>
+    <div class="action-row">
+      <div class="circle-btn" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
+        <div class="tooltip">Copy Bitcoin address</div>
+        <i class="fab fa-btc btc-icon"></i>
+      </div>
+      <div class="circle-btn" onclick="tipWoS()">
+        <div class="tooltip">Tip via Wallet of Satoshi</div>
+        <i class="fas fa-bolt btc-icon"></i>
+      </div>
     </div>
+    <div class="copied-msg">Copied!</div>
+  </div>
 
-    <div class="tip-box">
-      <h3>💸 Ethereum Tip</h3>
-      <button class="evm-btn" onclick="sendEth()">Tip via MetaMask</button>
+  <!-- Ethereum Card -->
+  <div class="wallet">
+    <div class="balance" id="ethBalance">Loading...</div>
+    <div>Ethereum</div>
+    <div class="action-row">
+      <div class="circle-btn" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
+        <div class="tooltip">Copy Ethereum address</div>
+        <i class="fab fa-ethereum eth-icon"></i>
+      </div>
+      <div class="circle-btn" onclick="tipMetaMask()">
+        <div class="tooltip">Tip via MetaMask</div>
+        <i class="fab fa-ethereum eth-icon"></i>
+      </div>
     </div>
+    <div class="copied-msg">Copied!</div>
   </div>
+</div>
 
-  <div class="footer">
-    Built with ❤️ inspired by Venmo-style tipping.
-  </div>
+<p class="info">
+  Contributions to this wallet support and grow businesses.
+</p>
 
-  <script>
-    // Generate QR code for Wallet of Satoshi Lightning Address
-    QRCode.toCanvas(
-      document.getElementById("qrCode"),
-      "lightning:fabledwool37@walletofsatoshi.com",
-      { width: 160 }
-    );
+<h2>Recent Supporters</h2>
+<div class="supporters" id="supporters">
+  <div class="supporter-card">Loading supporters...</div>
+</div>
 
-    // Ethereum tip via MetaMask
-    async function sendEth() {
-      if (typeof window.ethereum !== 'undefined') {
-        const web3 = new Web3(window.ethereum);
-        try {
-          await ethereum.request({ method: 'eth_requestAccounts' });
-          const accounts = await web3.eth.getAccounts();
-          const sender = accounts[0];
-          const receiver = '0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e'; // Replace with your ETH address
-          const amount = web3.utils.toWei('0.01', 'ether');
+<p class="info">
+  Interested in what I've built here? Send me a message on X.
+</p>
 
-          await web3.eth.sendTransaction({
-            from: sender,
-            to: receiver,
-            value: amount
+<div class="contact-circle">
+  <a href="https://x.com/qazwsxz12" target="_blank">
+    <svg viewBox="0 0 24 24">
+      <path d="M4.5 3h4.9l3.6 5.2 3.6-5.2h4.9l-6.5 9.3 7 10.7h-5l-4.5-6.7-4.5 6.7h-5l7-10.7-6.5-9.3z"/>
+    </svg>
+  </a>
+</div>
+
+<script>
+function copyAddress(el) {
+  navigator.clipboard.writeText(el.getAttribute("data-address")).then(() => {
+    const msg = el.parentElement.parentElement.querySelector('.copied-msg');
+    msg.style.opacity = 1;
+    setTimeout(() => msg.style.opacity = 0, 800);
+  });
+}
+
+function tipWoS() {
+  window.open("lightning:fabledwool37@walletofsatoshi.com", "_blank");
+}
+
+async function tipMetaMask() {
+  if (typeof window.ethereum === 'undefined') {
+    alert('MetaMask not detected. Please install MetaMask.');
+    return;
+  }
+
+  try {
+    await ethereum.request({ method: 'eth_requestAccounts' });
+    const accounts = await ethereum.request({ method: 'eth_accounts' });
+    const sender = accounts[0];
+    const to = "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e";
+    const amountEth = prompt("Enter ETH amount to tip:", "0.01");
+    if (!amountEth) return;
+
+    const tx = {
+      from: sender,
+      to,
+      value: '0x' + (BigInt(Math.floor(parseFloat(amountEth) * 1e18)).toString(16))
+    };
+
+    await ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [tx],
+    });
+
+    alert('Transaction sent!');
+  } catch (err) {
+    console.error(err);
+    alert('Transaction failed or cancelled.');
+  }
+}
+
+function formatBalance(val) {
+  return parseFloat(val).toPrecision(6).replace(/\.?0+$/, '');
+}
+
+function updateWalletData() {
+  let prices = {};
+  fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd')
+    .then(res => res.json())
+    .then(data => {
+      prices.btc = data.bitcoin.usd;
+      prices.eth = data.ethereum.usd;
+
+      fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
+        .then(res => res.text())
+        .then(sats => {
+          const btc = parseInt(sats) / 100000000;
+          document.getElementById("btcBalance").textContent =
+            `${formatBalance(btc)} BTC ≈ $${(btc * prices.btc).toFixed(2)}`;
+        });
+
+      fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+        .then(res => res.json())
+        .then(data => {
+          const eth = parseInt(data.result) / 1e18;
+          document.getElementById("ethBalance").textContent =
+            `${formatBalance(eth)} ETH ≈ $${(eth * prices.eth).toFixed(2)}`;
+        });
+
+      Promise.all([
+        fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r => r.json()).catch(() => null),
+        fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+          .then(r => r.json()).catch(() => null)
+      ]).then(([btcData, ethData]) => {
+        let supporters = [];
+        if (btcData && btcData.txs) {
+          btcData.txs.slice(0, 4).forEach(tx => {
+            tx.inputs.forEach(inp => {
+              let val = inp.prev_out.value / 1e8;
+              supporters.push({
+                address: inp.prev_out.addr,
+                amount: `${formatBalance(val)} BTC`
+              });
+            });
           });
-        } catch (err) {
-          alert('Transaction cancelled or failed.');
-          console.error(err);
         }
-      } else {
-        alert('MetaMask is not installed.');
-      }
-    }
-  </script>
+        if (ethData && ethData.result) {
+          ethData.result.slice(0, 4).forEach(tx => {
+            if (tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e") {
+              let val = parseInt(tx.value) / 1e18;
+              supporters.push({
+                address: tx.from,
+                amount: `${formatBalance(val)} ETH`
+              });
+            }
+          });
+        }
+
+        const container = document.getElementById("supporters");
+        container.innerHTML = "";
+        if (supporters.length) {
+          supporters.slice(0, 4).forEach(sup => {
+            const card = document.createElement("div");
+            card.className = "supporter-card";
+            card.textContent = `${sup.address.slice(0, 6)}...${sup.address.slice(-4)} tipped ${sup.amount}`;
+            container.appendChild(card);
+          });
+        } else {
+          container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
+        }
+      });
+    });
+}
+
+updateWalletData();
+setInterval(updateWalletData, 60000);
+</script>
+
 </body>
 </html>
