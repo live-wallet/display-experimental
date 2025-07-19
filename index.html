@@ -174,6 +174,10 @@
       width: 20px;
       height: 20px;
     }
+    .metamask-icon {
+      width: 22px;
+      height: 22px;
+    }
   </style>
 </head>
 <body>
@@ -185,7 +189,7 @@
 
 <div class="wallets-container">
 
-  <!-- Bitcoin Card -->
+  <!-- Bitcoin Wallet -->
   <div class="wallet">
     <div class="balance" id="btcBalance">Loading...</div>
     <div>Bitcoin</div>
@@ -195,14 +199,14 @@
         <i class="fab fa-btc btc-icon"></i>
       </div>
       <div class="circle-btn" onclick="tipWoS()">
-        <div class="tooltip">Tip via Wallet of Satoshi</div>
+        <div class="tooltip">Tip via Lightning</div>
         <i class="fas fa-bolt btc-icon"></i>
       </div>
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
 
-  <!-- Ethereum Card -->
+  <!-- Ethereum Wallet -->
   <div class="wallet">
     <div class="balance" id="ethBalance">Loading...</div>
     <div>Ethereum</div>
@@ -213,7 +217,7 @@
       </div>
       <div class="circle-btn" onclick="tipMetaMask()">
         <div class="tooltip">Tip via MetaMask</div>
-        <i class="fab fa-ethereum eth-icon"></i>
+        <img class="metamask-icon" src="https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg" alt="MetaMask">
       </div>
     </div>
     <div class="copied-msg">Copied!</div>
