@@ -8,137 +8,149 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7f9fb;
+      color: #333;
+      margin: 0;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
       min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-      color: #333;
+      text-align: center;
     }
+
     .header {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
+
     .header img {
       width: 48px;
       height: 48px;
       border-radius: 50%;
       object-fit: cover;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
+
     h1 {
-      font-size: 1.8em;
+      font-size: 2rem;
       margin: 0;
+      font-weight: 600;
     }
+
     .wallets-container {
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 18px;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       align-items: center;
     }
+
     .wallet {
-      background: #fff;
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      transition: transform 0.2s;
-      position: relative;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 18px 20px;
       width: 100%;
-      max-width: 300px;
+      max-width: 320px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s ease;
+      position: relative;
     }
+
     .wallet:hover {
       transform: translateY(-2px);
     }
+
     .balance {
-      font-size: 1.3em;
-      font-weight: bold;
-      margin-bottom: 6px;
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #222;
     }
-    .action-row {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 10px;
-    }
-    .circle-btn {
-      width: 45px;
-      height: 45px;
+
+    .copy-circle {
+      margin-top: 12px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      background: #eee;
+      background: #f1f3f5;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
       cursor: pointer;
+      position: relative;
       transition: background 0.2s;
     }
-    .circle-btn:hover {
-      background: #ddd;
+
+    .copy-circle:hover {
+      background: #e2e6ea;
     }
+
     .btc-icon, .eth-icon {
-      font-size: 20px;
-      color: #343434;
+      font-size: 22px;
+      color: #444;
     }
+
     .tooltip {
       position: absolute;
-      bottom: 120%;
+      bottom: 115%;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(240, 240, 240, 0.95);
+      background: #f2f2f2;
       color: #333;
-      padding: 3px 6px;
-      border-radius: 4px;
-      font-size: 0.7em;
-      white-space: nowrap;
+      padding: 4px 8px;
+      font-size: 0.7rem;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
       opacity: 0;
       visibility: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       transition: opacity 0.2s;
-      z-index: 10;
+      white-space: nowrap;
     }
+
     .tooltip::after {
       content: '';
       position: absolute;
       top: 100%;
       left: 50%;
       transform: translateX(-50%);
-      border-width: 4px;
-      border-style: solid;
-      border-color: rgba(240,240,240,0.95) transparent transparent transparent;
+      border: 5px solid transparent;
+      border-top-color: #f2f2f2;
     }
-    .circle-btn:hover .tooltip {
+
+    .copy-circle:hover .tooltip {
       opacity: 1;
       visibility: visible;
     }
+
     .copied-msg {
       position: absolute;
       bottom: -18px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 0.75em;
+      font-size: 0.75rem;
       color: #444;
       opacity: 0;
       transition: opacity 0.2s;
     }
+
     .info {
-      max-width: 400px;
-      margin-top: 25px;
-      font-size: 0.95em;
-      color: #444;
+      max-width: 420px;
+      margin-top: 28px;
+      font-size: 0.95rem;
+      color: #555;
     }
+
     h2 {
-      font-size: 1.4em;
-      margin: 30px 0 15px;
-      color: #333;
+      font-size: 1.5rem;
+      margin: 35px 0 15px;
+      color: #222;
     }
+
     .supporters {
       max-width: 400px;
       display: flex;
@@ -146,36 +158,35 @@
       gap: 10px;
       justify-content: center;
     }
+
     .supporter-card {
-      background: #f9f9f9;
+      background: #eef1f4;
       padding: 8px 14px;
-      border-radius: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      font-size: 0.9em;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
       white-space: nowrap;
-      transition: all 0.3s;
     }
+
     .contact-circle {
-      margin-top: 30px;
-      width: 50px;
-      height: 50px;
+      margin-top: 35px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
-      background: #eee;
+      background: #f1f3f5;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
       transition: background 0.2s;
     }
+
     .contact-circle:hover {
-      background: #ddd;
+      background: #e1e4e8;
     }
+
     .contact-circle svg {
       fill: #000;
-      width: 20px;
-      height: 20px;
-    }
-    .metamask-logo {
       width: 20px;
       height: 20px;
     }
@@ -189,50 +200,22 @@
 </div>
 
 <div class="wallets-container">
-
-  <!-- Bitcoin Card -->
   <div class="wallet">
     <div class="balance" id="btcBalance">Loading...</div>
     <div>Bitcoin</div>
-    <div class="action-row">
-      <div class="circle-btn" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
-        <div class="tooltip">Copy Bitcoin address</div>
-        <i class="fab fa-btc btc-icon"></i>
-      </div>
-      <div class="circle-btn" onclick="tipWoS()">
-        <div class="tooltip">Tip via Lightning (Wallet of Satoshi)</div>
-        <i class="fas fa-bolt btc-icon"></i>
-      </div>
+    <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
+      <div class="tooltip">Copy Bitcoin address</div>
+      <i class="fab fa-btc btc-icon"></i>
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
 
-  <!-- Ethereum Card -->
   <div class="wallet">
     <div class="balance" id="ethBalance">Loading...</div>
     <div>Ethereum</div>
-    <div class="action-row">
-      <div class="circle-btn" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
-        <div class="tooltip">Copy Ethereum address</div>
-        <i class="fab fa-ethereum eth-icon"></i>
-      </div>
-      <!-- Inside the Ethereum card: -->
-
-      <!-- SNIPPET of where changes were made only (for brevity) -->
-<!-- Inside Ethereum card action row -->
-<div class="circle-btn" onclick="tipMetaMask()">
-  <div class="tooltip">Tip via MetaMask</div>
-  <!-- Simplified and recolored MetaMask logo -->
-  <svg class="metamask-logo" viewBox="0 0 318.6 318.6" xmlns="http://www.w3.org/2000/svg">
-    <polygon fill="#444" points="274.1,35.4 174.7,110.1 193.4,67.3"/>
-    <polygon fill="#444" points="44.6,35.4 124.8,67.4 143.1,110.2"/>
-    <polygon fill="#555" points="238.5,221.4 209.1,259.4 265.1,274.3 280.4,223.6"/>
-    <polygon fill="#555" points="38.2,223.7 53.4,274.3 109.4,259.5 80,221.4"/>
-    <polygon fill="#333" points="109.4,259.5 143.5,239.3 111.1,214.4"/>
-    <polygon fill="#333" points="209.1,259.4 207.5,214.2 174.9,239.3"/>
-  </svg>
-</div>
-
+    <div class="copy-circle" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
+      <div class="tooltip">Copy Ethereum address</div>
+      <i class="fab fa-ethereum eth-icon"></i>
     </div>
     <div class="copied-msg">Copied!</div>
   </div>
@@ -262,46 +245,10 @@
 <script>
 function copyAddress(el) {
   navigator.clipboard.writeText(el.getAttribute("data-address")).then(() => {
-    const msg = el.parentElement.parentElement.querySelector('.copied-msg');
+    const msg = el.parentElement.querySelector('.copied-msg');
     msg.style.opacity = 1;
     setTimeout(() => msg.style.opacity = 0, 800);
   });
-}
-
-function tipWoS() {
-  window.open("lightning:fabledwool37@walletofsatoshi.com", "_blank");
-}
-
-async function tipMetaMask() {
-  if (typeof window.ethereum === 'undefined') {
-    alert('MetaMask not detected. Please install MetaMask.');
-    return;
-  }
-
-  try {
-    await ethereum.request({ method: 'eth_requestAccounts' });
-    const accounts = await ethereum.request({ method: 'eth_accounts' });
-    const sender = accounts[0];
-    const to = "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e";
-    const amountEth = prompt("Enter ETH amount to tip:", "0.01");
-    if (!amountEth) return;
-
-    const tx = {
-      from: sender,
-      to,
-      value: '0x' + (BigInt(Math.floor(parseFloat(amountEth) * 1e18)).toString(16))
-    };
-
-    await ethereum.request({
-      method: 'eth_sendTransaction',
-      params: [tx],
-    });
-
-    alert('Transaction sent!');
-  } catch (err) {
-    console.error(err);
-    alert('Transaction failed or cancelled.');
-  }
 }
 
 function formatBalance(val) {
@@ -319,7 +266,7 @@ function updateWalletData() {
       fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
         .then(res => res.text())
         .then(sats => {
-          const btc = parseInt(sats) / 100000000;
+          const btc = parseInt(sats) / 1e8;
           document.getElementById("btcBalance").textContent =
             `${formatBalance(btc)} BTC ≈ $${(btc * prices.btc).toFixed(2)}`;
         });
