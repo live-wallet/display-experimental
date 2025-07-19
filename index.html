@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -13,116 +14,124 @@
       --venmo-dark: #2d7bb8;
       --text-color: #1a1a1a;
       --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }body {
-  margin: 0;
-  font-family: var(--font-family);
-  background-color: #f7f9fb;
-  color: var(--text-color);
-  padding: 20px;
-}
+    }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 30px;
-}
+    body {
+      margin: 0;
+      font-family: var(--font-family);
+      background-color: #f7f9fb;
+      color: var(--text-color);
+      padding: 20px;
+    }
 
-.header img {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 2px solid var(--venmo-blue);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 30px;
+    }
 
-.header h1 {
-  font-size: 1.8em;
-  color: var(--venmo-blue);
-  margin: 0;
-}
+    .header img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid var(--venmo-blue);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-.wallets {
-  max-width: 400px;
-  margin: auto;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
+    .header h1 {
+      font-size: 1.8em;
+      color: var(--venmo-blue);
+      margin: 0;
+    }
 
-.wallets h2 {
-  font-size: 1.2em;
-  color: var(--venmo-dark);
-  text-align: center;
-}
+    .wallets {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
 
-.tip-box {
-  margin: 20px 0;
-  padding: 15px;
-  border-radius: 10px;
-  background-color: var(--venmo-light);
-  text-align: center;
-}
+    .wallets h2 {
+      font-size: 1.2em;
+      color: var(--venmo-dark);
+      text-align: center;
+    }
 
-.tip-box h3 {
-  margin-bottom: 10px;
-  font-size: 1.1em;
-}
+    .tip-box {
+      margin: 20px 0;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: var(--venmo-light);
+      text-align: center;
+    }
 
-.lightning-btn, .evm-btn {
-  background-color: var(--venmo-blue);
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 1em;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.2s;
-}
+    .tip-box h3 {
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
 
-.lightning-btn:hover, .evm-btn:hover {
-  background-color: var(--venmo-dark);
-}
+    .lightning-btn, .evm-btn {
+      background-color: var(--venmo-blue);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
 
-#qrCode {
-  margin: 10px auto;
-  width: 160px;
-}
+    .lightning-btn:hover, .evm-btn:hover {
+      background-color: var(--venmo-dark);
+    }
 
-.footer {
-  margin-top: 40px;
-  text-align: center;
-  font-size: 0.9em;
-  color: #666;
-}
+    #qrCode {
+      margin: 10px auto;
+      width: 160px;
+    }
 
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #666;
+    }
   </style>
 </head>
 <body>
   <div class="header">
     <img id="profilePicture" src="https://unavatar.io/x/qazwsxz12" alt="Profile picture" />
     <h1>Send a Tip</h1>
-  </div>  <div class="wallets">
-    <h2>Tip Options</h2><div class="tip-box">
-  <h3>⚡ Lightning Tip</h3>
-  <div id="qrCode"></div>
-  <button class="lightning-btn" onclick="window.open('lightning:LNURL1DP68GURN8GHJ7MRWW4EXCTNRD9HXGETVV96HGCM0D3HK6TM9D3CZ7MRW9E3K7MF0XQHKZMF0XQ5FNSERXF6RYVF4XQUNWVP0VA5K2EP5VY6RXVP0XQUNWV3JXQ6RYV3JXQUNWV3JXQ6RY', '_blank')">
-    Open in Wallet
-  </button>
-</div>
+  </div>
 
-<div class="tip-box">
-  <h3>💸 Ethereum Tip</h3>
-  <button class="evm-btn" onclick="sendEth()">Tip via MetaMask</button>
-</div>
+  <div class="wallets">
+    <h2>Tip Options</h2>
 
-  </div>  <div class="footer">
+    <div class="tip-box">
+      <h3>⚡ Lightning Tip</h3>
+      <div id="qrCode"></div>
+      <button class="lightning-btn" onclick="window.open('lightning:LNURL1DP68GURN8GHJ7MRWW4EXCTNRD9HXGETVV96HGCM0D3HK6TM9D3CZ7MRW9E3K7MF0XQHKZMF0XQ5FNSERXF6RYVF4XQUNWVP0VA5K2EP5VY6RXVP0XQUNWV3JXQ6RYV3JXQUNWV3JXQ6RY', '_blank')">
+        Open in Wallet
+      </button>
+    </div>
+
+    <div class="tip-box">
+      <h3>💸 Ethereum Tip</h3>
+      <button class="evm-btn" onclick="sendEth()">Tip via MetaMask</button>
+    </div>
+  </div>
+
+  <div class="footer">
     Built with ❤️ inspired by Venmo-style tipping.
-  </div>  <script>
+  </div>
+
+  <script>
     // Lightning QR
     QRCode.toCanvas(document.getElementById("qrCode"), "lightning:LNURL1DP68GURN8GHJ7MRWW4EXCTNRD9HXGETVV96HGCM0D3HK6TM9D3CZ7MRW9E3K7MF0XQHKZMF0XQ5FNSERXF6RYVF4XQUNWVP0VA5K2EP5VY6RXVP0XQUNWV3JXQ6RYV3JXQUNWV3JXQ6RY", { width: 160 });
 
@@ -150,5 +159,6 @@
         alert('MetaMask is not installed.');
       }
     }
-  </script></body>
+  </script>
+</body>
 </html>
