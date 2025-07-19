@@ -106,7 +106,7 @@
 </head>
 <body>
   <div class="header">
-    <img id="profilePicture" src="https://unavatar.io/x/qazwsxz12" alt="Profile picture" />
+    <img id="profilePicture" src="https://unavatar.io/x/fabledwool37" alt="Profile picture" />
     <h1>Send a Tip</h1>
   </div>
 
@@ -116,7 +116,8 @@
     <div class="tip-box">
       <h3>⚡ Lightning Tip</h3>
       <div id="qrCode"></div>
-      <button class="lightning-btn" onclick="window.open('lightning:LNURL1DP68GURN8GHJ7MRWW4EXCTNRD9HXGETVV96HGCM0D3HK6TM9D3CZ7MRW9E3K7MF0XQHKZMF0XQ5FNSERXF6RYVF4XQUNWVP0VA5K2EP5VY6RXVP0XQUNWV3JXQ6RYV3JXQUNWV3JXQ6RY', '_blank')">
+      <p><strong>Lightning Address:</strong><br> fabledwool37@walletofsatoshi.com</p>
+      <button class="lightning-btn" onclick="window.open('lightning:fabledwool37@walletofsatoshi.com', '_blank')">
         Open in Wallet
       </button>
     </div>
@@ -132,10 +133,10 @@
   </div>
 
   <script>
-    // Generate Lightning QR
+    // Generate QR code for Wallet of Satoshi Lightning Address
     QRCode.toCanvas(
       document.getElementById("qrCode"),
-      "lightning:LNURL1DP68GURN8GHJ7MRWW4EXCTNRD9HXGETVV96HGCM0D3HK6TM9D3CZ7MRW9E3K7MF0XQHKZMF0XQ5FNSERXF6RYVF4XQUNWVP0VA5K2EP5VY6RXVP0XQUNWV3JXQ6RYV3JXQUNWV3JXQ6RY",
+      "lightning:fabledwool37@walletofsatoshi.com",
       { width: 160 }
     );
 
@@ -147,7 +148,7 @@
           await ethereum.request({ method: 'eth_requestAccounts' });
           const accounts = await web3.eth.getAccounts();
           const sender = accounts[0];
-          const receiver = '0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e';
+          const receiver = '0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e'; // Replace with your ETH address
           const amount = web3.utils.toWei('0.01', 'ether');
 
           await web3.eth.sendTransaction({
