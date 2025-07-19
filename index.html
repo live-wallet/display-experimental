@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Wallet</title>
+  <title>Tip Wallet</title>
   <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -132,10 +132,14 @@
   </div>
 
   <script>
-    // Lightning QR
-    QRCode.toCanvas(document.getElementById("qrCode"), "lightning:LNURL1DP68GURN8GHJ7MRWW4EXCTNRD9HXGETVV96HGCM0D3HK6TM9D3CZ7MRW9E3K7MF0XQHKZMF0XQ5FNSERXF6RYVF4XQUNWVP0VA5K2EP5VY6RXVP0XQUNWV3JXQ6RYV3JXQUNWV3JXQ6RY", { width: 160 });
+    // Generate Lightning QR
+    QRCode.toCanvas(
+      document.getElementById("qrCode"),
+      "lightning:LNURL1DP68GURN8GHJ7MRWW4EXCTNRD9HXGETVV96HGCM0D3HK6TM9D3CZ7MRW9E3K7MF0XQHKZMF0XQ5FNSERXF6RYVF4XQUNWVP0VA5K2EP5VY6RXVP0XQUNWV3JXQ6RYV3JXQUNWV3JXQ6RY",
+      { width: 160 }
+    );
 
-    // MetaMask EVM tip
+    // Ethereum tip via MetaMask
     async function sendEth() {
       if (typeof window.ethereum !== 'undefined') {
         const web3 = new Web3(window.ethereum);
