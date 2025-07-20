@@ -22,6 +22,7 @@
       margin: 0;
       padding: 20px;
       color: #333;
+      position: relative;
     }
 
     .header {
@@ -31,6 +32,7 @@
       margin-bottom: 5px;
       width: 100%;
       max-width: 400px;
+      position: relative;
     }
 
     .header img {
@@ -59,6 +61,22 @@
       max-width: 400px;
       align-self: flex-start;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .share-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      cursor: pointer;
+      font-size: 1.3em;
+      background: #eee;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+
+    .share-icon:hover {
+      background: #ddd;
     }
 
     .wallets-container {
@@ -217,6 +235,9 @@
 <div class="header">
   <img src="brian-mccall-QhiA6DdlgiM-unsplash.jpg" alt="Profile picture">
   <h1>Wallet</h1>
+  <div class="share-icon" onclick="sharePage()" title="Share this page">
+    <i class="fas fa-share-alt"></i>
+  </div>
 </div>
 
 <div id="supporter-count">Loading supporter count...</div>
@@ -271,6 +292,22 @@ function copyAddress(el) {
     msg.style.opacity = 1;
     setTimeout(() => msg.style.opacity = 0, 800);
   });
+}
+
+function sharePage() {
+  const shareData = {
+    title: document.title,
+    text: "Check out this crypto wallet dashboard!",
+    url: window.location.href
+  };
+
+  if (navigator.share) {
+    navigator.share(shareData).catch(console.error);
+  } else {
+    navigator.clipboard.writeText(shareData.url).then(() => {
+      alert("Link copied to clipboard!");
+    });
+  }
 }
 
 function formatBalance(val) {
