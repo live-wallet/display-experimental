@@ -22,17 +22,21 @@
       margin: 0;
       padding: 20px;
       color: #333;
-      position: relative;
     }
 
     .header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 5px;
+      justify-content: space-between;
       width: 100%;
       max-width: 400px;
-      position: relative;
+      margin-bottom: 5px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .header img {
@@ -48,6 +52,19 @@
       margin: 0;
     }
 
+    .share-icon {
+      font-size: 1.4em;
+      cursor: pointer;
+      color: #666;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+
+    .share-icon:hover {
+      background: #f0f0f0;
+    }
+
     #supporter-count {
       text-align: left;
       font-size: 0.85em;
@@ -61,22 +78,6 @@
       max-width: 400px;
       align-self: flex-start;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .share-icon {
-      position: absolute;
-      top: 0;
-      right: 0;
-      cursor: pointer;
-      font-size: 1.3em;
-      background: #eee;
-      padding: 8px;
-      border-radius: 50%;
-      transition: background 0.2s;
-    }
-
-    .share-icon:hover {
-      background: #ddd;
     }
 
     .wallets-container {
@@ -233,11 +234,11 @@
 <body>
 
 <div class="header">
-  <img src="brian-mccall-QhiA6DdlgiM-unsplash.jpg" alt="Profile picture">
-  <h1>Wallet</h1>
-  <div class="share-icon" onclick="sharePage()" title="Share this page">
-    <i class="fas fa-share-alt"></i>
+  <div class="header-left">
+    <img src="brian-mccall-QhiA6DdlgiM-unsplash.jpg" alt="Profile picture">
+    <h1>Wallet</h1>
   </div>
+  <i class="fas fa-share-alt share-icon" onclick="sharePage()" title="Share this page"></i>
 </div>
 
 <div id="supporter-count">Loading supporter count...</div>
@@ -297,16 +298,14 @@ function copyAddress(el) {
 function sharePage() {
   const shareData = {
     title: document.title,
-    text: "Check out this crypto wallet dashboard!",
+    text: 'Check out this crypto wallet!',
     url: window.location.href
   };
 
   if (navigator.share) {
     navigator.share(shareData).catch(console.error);
   } else {
-    navigator.clipboard.writeText(shareData.url).then(() => {
-      alert("Link copied to clipboard!");
-    });
+    alert("Sharing is not supported on this browser.");
   }
 }
 
