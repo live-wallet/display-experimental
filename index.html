@@ -7,18 +7,9 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    :root {
-      --primary: #3d95ce;
-      --background: #ffffff;
-      --accent-light: #e6f0fb;
-      --text-dark: #333;
-      --text-muted: #666;
-    }
-
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: var(--background);
-      color: var(--text-dark);
+      font-family: Arial, sans-serif;
+      background: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -26,15 +17,14 @@
       min-height: 100vh;
       margin: 0;
       padding: 20px;
+      color: #333;
     }
-
     .header {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
-
     .header img {
       width: 48px;
       height: 48px;
@@ -42,86 +32,71 @@
       object-fit: cover;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
     h1 {
-      font-size: 1.9em;
+      font-size: 1.8em;
       margin: 0;
-      font-weight: 600;
-      color: var(--primary);
     }
-
     .wallets-container {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 15px;
       width: 100%;
       max-width: 400px;
       align-items: center;
     }
-
     .wallet {
-      background: var(--accent-light);
-      border-radius: 14px;
-      padding: 18px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
-      width: 100%;
-      max-width: 320px;
-      position: relative;
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
       transition: transform 0.2s;
+      position: relative;
+      width: 100%;
+      max-width: 300px;
     }
-
     .wallet:hover {
       transform: translateY(-2px);
     }
-
     .balance {
-      font-size: 1.4em;
+      font-size: 1.3em;
       font-weight: bold;
-      margin-bottom: 5px;
-      color: var(--text-dark);
+      margin-bottom: 6px;
     }
-
     .copy-circle {
-      width: 44px;
-      height: 44px;
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
-      background: #fff;
+      background: #eee;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 10px auto 0;
       cursor: pointer;
       position: relative;
-      transition: background 0.2s;
-      border: 1px solid #ddd;
     }
-
     .copy-circle:hover {
-      background: #f0f0f0;
+      background: #ddd;
     }
-
     .btc-icon, .eth-icon {
       font-size: 20px;
-      color: var(--primary);
+      color: #343434;
     }
-
     .tooltip {
       position: absolute;
       bottom: 120%;
       left: 50%;
       transform: translateX(-50%);
-      background: #f0f0f0;
-      color: #222;
-      padding: 4px 8px;
+      background: rgba(240, 240, 240, 0.95);
+      color: #333;
+      padding: 3px 6px;
       border-radius: 4px;
-      font-size: 0.75em;
+      font-size: 0.7em;
       white-space: nowrap;
       opacity: 0;
       visibility: hidden;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      transition: opacity 0.2s ease;
+      transition: opacity 0.2s;
     }
-
     .tooltip::after {
       content: '';
       position: absolute;
@@ -130,14 +105,12 @@
       transform: translateX(-50%);
       border-width: 4px;
       border-style: solid;
-      border-color: #f0f0f0 transparent transparent transparent;
+      border-color: rgba(240,240,240,0.95) transparent transparent transparent;
     }
-
     .copy-circle:hover .tooltip {
       opacity: 1;
       visibility: visible;
     }
-
     .copied-msg {
       position: absolute;
       bottom: -18px;
@@ -146,67 +119,54 @@
       font-size: 0.75em;
       color: #444;
       opacity: 0;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.2s;
     }
-
     .info {
-      max-width: 420px;
+      max-width: 400px;
       margin-top: 25px;
       font-size: 0.95em;
-      color: var(--text-muted);
+      color: #444;
     }
-
     h2 {
-      font-size: 1.3em;
-      margin: 35px 0 15px;
-      color: var(--primary);
+      font-size: 1.4em;
+      margin: 30px 0 15px;
+      color: #333;
     }
-
     .supporters {
-      max-height: 250px;
-      overflow-y: auto;
-      width: 100%;
       max-width: 400px;
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       gap: 10px;
-      padding: 8px 4px;
-      border-radius: 10px;
-      background: #f5f7fa;
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+      justify-content: center;
     }
-
     .supporter-card {
-      background: #fff;
-      padding: 10px 14px;
-      border-radius: 12px;
+      background: #f9f9f9;
+      padding: 8px 14px;
+      border-radius: 20px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       font-size: 0.9em;
-      color: #222;
-      text-align: left;
+      white-space: nowrap;
+      transition: all 0.3s;
     }
-
     .contact-circle {
       margin-top: 30px;
-      width: 52px;
-      height: 52px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      background: var(--accent-light);
+      background: #eee;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s ease;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      transition: background 0.2s;
     }
-
     .contact-circle:hover {
-      background: #dbe8f5;
+      background: #ddd;
     }
-
     .contact-circle svg {
-      fill: #1c1c1c;
-      width: 22px;
-      height: 22px;
+      fill: #000;
+      width: 20px;
+      height: 20px;
     }
   </style>
 </head>
@@ -245,7 +205,7 @@
 
 <h2>Recent Supporters</h2>
 <div class="supporters" id="supporters">
-  <!-- Fake entries will be injected here -->
+  <div class="supporter-card">Loading supporters...</div>
 </div>
 
 <p class="info">
@@ -273,52 +233,77 @@ function formatBalance(val) {
   return parseFloat(val).toPrecision(6).replace(/\.?0+$/, '');
 }
 
-function addFakeSupporter() {
-  const names = ["0xabc123", "0xbada55", "0xdeadbe", "0xcafe88", "0xf00dfd", "0x0badc0", "0x33ffee"];
-  const coins = ["BTC", "ETH"];
-  const randomName = names[Math.floor(Math.random() * names.length)];
-  const randomCoin = coins[Math.floor(Math.random() * coins.length)];
-  const amount = (Math.random() * 0.05 + 0.001).toFixed(4);
-  const entry = document.createElement("div");
-  entry.className = "supporter-card";
-  entry.textContent = `${randomName.slice(0, 6)}...${randomName.slice(-2)} tipped ${amount} ${randomCoin}`;
-  const container = document.getElementById("supporters");
-  container.prepend(entry);
-  if (container.children.length > 20) {
-    container.removeChild(container.lastChild);
-  }
-}
-
 function updateWalletData() {
+  let prices = {};
   fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd')
     .then(res => res.json())
     .then(data => {
-      const btcPrice = data.bitcoin.usd;
-      const ethPrice = data.ethereum.usd;
+      prices.btc = data.bitcoin.usd;
+      prices.eth = data.ethereum.usd;
 
-      fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`)
+      fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
         .then(res => res.text())
         .then(sats => {
-          const btc = parseInt(sats) / 1e8;
+          const btc = parseInt(sats) / 100000000;
           document.getElementById("btcBalance").textContent =
-            `${formatBalance(btc)} BTC ≈ $${(btc * btcPrice).toFixed(2)}`;
+            `${formatBalance(btc)} BTC ≈ $${(btc * prices.btc).toFixed(2)}`;
         });
 
-      fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=YourApiKey`)
+      fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
         .then(res => res.json())
         .then(data => {
           const eth = parseInt(data.result) / 1e18;
           document.getElementById("ethBalance").textContent =
-            `${formatBalance(eth)} ETH ≈ $${(eth * ethPrice).toFixed(2)}`;
+            `${formatBalance(eth)} ETH ≈ $${(eth * prices.eth).toFixed(2)}`;
         });
+
+      Promise.all([
+        fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r => r.json()).catch(() => null),
+        fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+          .then(r => r.json()).catch(() => null)
+      ]).then(([btcData, ethData]) => {
+        let supporters = [];
+        if (btcData && btcData.txs) {
+          btcData.txs.slice(0, 4).forEach(tx => {
+            tx.inputs.forEach(inp => {
+              let val = inp.prev_out.value / 1e8;
+              supporters.push({
+                address: inp.prev_out.addr,
+                amount: `${formatBalance(val)} BTC`
+              });
+            });
+          });
+        }
+        if (ethData && ethData.result) {
+          ethData.result.slice(0, 4).forEach(tx => {
+            if (tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e") {
+              let val = parseInt(tx.value) / 1e18;
+              supporters.push({
+                address: tx.from,
+                amount: `${formatBalance(val)} ETH`
+              });
+            }
+          });
+        }
+
+        const container = document.getElementById("supporters");
+        container.innerHTML = "";
+        if (supporters.length) {
+          supporters.slice(0, 4).forEach(sup => {
+            const card = document.createElement("div");
+            card.className = "supporter-card";
+            card.textContent = `${sup.address.slice(0, 6)}...${sup.address.slice(-4)} tipped ${sup.amount}`;
+            container.appendChild(card);
+          });
+        } else {
+          container.innerHTML = `<div class="supporter-card">No recent supporters yet.</div>`;
+        }
+      });
     });
 }
 
 updateWalletData();
 setInterval(updateWalletData, 60000);
-
-// Simulate new supporters every 5 seconds
-setInterval(addFakeSupporter, 5000);
 </script>
 
 </body>
