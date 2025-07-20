@@ -23,21 +23,22 @@
       max-width: 400px;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      margin-bottom: 10px;
+      align-items: center;
+      text-align: center;
       position: relative;
+      margin-bottom: 15px;
     }
 
     .header {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 12px;
-      width: 100%;
+      gap: 10px;
     }
 
     .header img {
-      width: 48px;
-      height: 48px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       object-fit: cover;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -229,8 +230,8 @@
   <div class="header">
     <img src="brian-mccall-QhiA6DdlgiM-unsplash.jpg" alt="Profile picture">
     <h1>Wallet</h1>
-    <i class="fas fa-share-alt share-icon" onclick="sharePage()" title="Share this page"></i>
   </div>
+  <i class="fas fa-share-alt share-icon" onclick="sharePage()" title="Share this page"></i>
   <div id="supporter-count">Loading supporter count...</div>
 </div>
 
