@@ -319,7 +319,7 @@ function updateWalletData() {
             `${formatBalance(btc)} BTC ≈ $${(btc * prices.btc).toFixed(2)}`;
         });
 
-      fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=YourApiKey`)
+      fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
         .then(res => res.json())
         .then(data => {
           const eth = parseInt(data.result) / 1e18;
