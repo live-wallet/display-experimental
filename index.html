@@ -6,37 +6,33 @@
   <title>Wallet Balance</title>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-  <link rel="manifest" href="site.webmanifest">
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #fff;
+      margin: 0;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
       color: #333;
+    }
+
+    .header-container {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      position: relative;
     }
 
     .header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 5px;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
       gap: 12px;
+      width: 100%;
     }
 
     .header img {
@@ -53,6 +49,9 @@
     }
 
     .share-icon {
+      position: absolute;
+      right: 0;
+      top: 0;
       font-size: 1.4em;
       cursor: pointer;
       color: #666;
@@ -66,18 +65,14 @@
     }
 
     #supporter-count {
-      text-align: left;
-      font-size: 0.85em;
+      margin-top: 8px;
       background: #ffdd57;
       color: #333;
       padding: 6px 14px;
       border-radius: 999px;
       font-weight: bold;
-      margin: 12px 0 15px;
-      width: fit-content;
-      max-width: 400px;
-      align-self: flex-start;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      font-size: 0.85em;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
 
     .wallets-container {
@@ -87,6 +82,7 @@
       width: 100%;
       max-width: 400px;
       align-items: center;
+      margin-top: 15px;
     }
 
     .wallet {
@@ -94,14 +90,9 @@
       border-radius: 12px;
       padding: 15px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      transition: transform 0.2s;
       position: relative;
       width: 100%;
       max-width: 300px;
-    }
-
-    .wallet:hover {
-      transform: translateY(-2px);
     }
 
     .balance {
@@ -181,6 +172,7 @@
       margin-top: 25px;
       font-size: 0.95em;
       color: #444;
+      text-align: center;
     }
 
     h2 {
@@ -233,15 +225,14 @@
 </head>
 <body>
 
-<div class="header">
-  <div class="header-left">
+<div class="header-container">
+  <div class="header">
     <img src="brian-mccall-QhiA6DdlgiM-unsplash.jpg" alt="Profile picture">
     <h1>Wallet</h1>
+    <i class="fas fa-share-alt share-icon" onclick="sharePage()" title="Share this page"></i>
   </div>
-  <i class="fas fa-share-alt share-icon" onclick="sharePage()" title="Share this page"></i>
+  <div id="supporter-count">Loading supporter count...</div>
 </div>
-
-<div id="supporter-count">Loading supporter count...</div>
 
 <div class="wallets-container">
   <div class="wallet">
@@ -301,11 +292,10 @@ function sharePage() {
     text: 'Check out this crypto wallet!',
     url: window.location.href
   };
-
   if (navigator.share) {
     navigator.share(shareData).catch(console.error);
   } else {
-    alert("Sharing is not supported on this browser.");
+    alert("Sharing not supported by your browser.");
   }
 }
 
@@ -324,12 +314,12 @@ function updateWalletData() {
       fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep?confirmations=3`)
         .then(res => res.text())
         .then(sats => {
-          const btc = parseInt(sats) / 100000000;
+          const btc = parseInt(sats) / 1e8;
           document.getElementById("btcBalance").textContent =
             `${formatBalance(btc)} BTC ≈ $${(btc * prices.btc).toFixed(2)}`;
         });
 
-      fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+      fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=YourApiKey`)
         .then(res => res.json())
         .then(data => {
           const eth = parseInt(data.result) / 1e18;
@@ -339,7 +329,7 @@ function updateWalletData() {
 
       Promise.all([
         fetch(`https://blockchain.info/rawaddr/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`).then(r => r.json()).catch(() => null),
-        fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=7HQVBFNBCEAYW31Z1B9V7W7G56KPR2XECW`)
+        fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&sort=desc&apikey=YourApiKey`)
           .then(r => r.json()).catch(() => null)
       ]).then(([btcData, ethData]) => {
         let supporters = [];
