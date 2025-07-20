@@ -27,7 +27,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 5px;
     }
     .header img {
       width: 48px;
@@ -39,6 +39,11 @@
     h1 {
       font-size: 1.8em;
       margin: 0;
+    }
+    #supporter-count {
+      font-size: 0.95em;
+      margin-bottom: 20px;
+      color: #666;
     }
     .wallets-container {
       display: flex;
@@ -180,6 +185,7 @@
   <img src="brian-mccall-QhiA6DdlgiM-unsplash.jpg" alt="Profile picture">
   <h1>Wallet</h1>
 </div>
+<div id="supporter-count">Loading supporter count...</div>
 
 <div class="wallets-container">
   <div class="wallet">
@@ -268,7 +274,7 @@ function updateWalletData() {
       ]).then(([btcData, ethData]) => {
         let supporters = [];
         if (btcData && btcData.txs) {
-          btcData.txs.slice(0, 4).forEach(tx => {
+          btcData.txs.forEach(tx => {
             tx.inputs.forEach(inp => {
               let val = inp.prev_out.value / 1e8;
               supporters.push({
@@ -279,7 +285,7 @@ function updateWalletData() {
           });
         }
         if (ethData && ethData.result) {
-          ethData.result.slice(0, 4).forEach(tx => {
+          ethData.result.forEach(tx => {
             if (tx.to.toLowerCase() === "0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e") {
               let val = parseInt(tx.value) / 1e18;
               supporters.push({
@@ -289,6 +295,10 @@ function updateWalletData() {
             }
           });
         }
+
+        const uniqueSupporters = new Set(supporters.map(s => s.address));
+        document.getElementById("supporter-count").textContent =
+          `${uniqueSupporters.size} supporter${uniqueSupporters.size !== 1 ? 's' : ''}`;
 
         const container = document.getElementById("supporters");
         container.innerHTML = "";
