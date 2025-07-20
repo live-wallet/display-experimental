@@ -213,12 +213,113 @@
 <body>
 
 <div class="header">
-  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&h=80&q=80" alt="Profile picture">
+  <img src="https://unavatar.io/x/qazwsxz12" alt="Profile picture">
   <h1>Wallet</h1>
 </div>
 
-<!-- The rest of the HTML remains unchanged (wallet balances, supporters feed, scripts, etc.) -->
-<!-- If you'd like the full code with the supporters scroll/tips, let me know and I’ll merge it all together again -->
+<div class="wallets-container">
+  <div class="wallet">
+    <div class="balance" id="btcBalance">Loading...</div>
+    <div>Bitcoin</div>
+    <div class="copy-circle" onclick="copyAddress(this)" data-address="bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep">
+      <div class="tooltip">Copy Bitcoin address</div>
+      <i class="fab fa-btc btc-icon"></i>
+    </div>
+    <div class="copied-msg">Copied!</div>
+  </div>
+
+  <div class="wallet">
+    <div class="balance" id="ethBalance">Loading...</div>
+    <div>Ethereum</div>
+    <div class="copy-circle" onclick="copyAddress(this)" data-address="0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e">
+      <div class="tooltip">Copy Ethereum address</div>
+      <i class="fab fa-ethereum eth-icon"></i>
+    </div>
+    <div class="copied-msg">Copied!</div>
+  </div>
+</div>
+
+<p class="info">
+  Contributions to this wallet support and grow businesses.
+</p>
+
+<h2>Recent Supporters</h2>
+<div class="supporters" id="supporters">
+  <!-- Fake entries will be injected here -->
+</div>
+
+<p class="info">
+  Interested in what I've built here? Send me a message on X.
+</p>
+
+<div class="contact-circle">
+  <a href="https://x.com/qazwsxz12" target="_blank">
+    <svg viewBox="0 0 24 24">
+      <path d="M4.5 3h4.9l3.6 5.2 3.6-5.2h4.9l-6.5 9.3 7 10.7h-5l-4.5-6.7-4.5 6.7h-5l7-10.7-6.5-9.3z"/>
+    </svg>
+  </a>
+</div>
+
+<script>
+function copyAddress(el) {
+  navigator.clipboard.writeText(el.getAttribute("data-address")).then(() => {
+    const msg = el.parentElement.querySelector('.copied-msg');
+    msg.style.opacity = 1;
+    setTimeout(() => msg.style.opacity = 0, 800);
+  });
+}
+
+function formatBalance(val) {
+  return parseFloat(val).toPrecision(6).replace(/\.?0+$/, '');
+}
+
+function addFakeSupporter() {
+  const names = ["0xabc123", "0xbada55", "0xdeadbe", "0xcafe88", "0xf00dfd", "0x0badc0", "0x33ffee"];
+  const coins = ["BTC", "ETH"];
+  const randomName = names[Math.floor(Math.random() * names.length)];
+  const randomCoin = coins[Math.floor(Math.random() * coins.length)];
+  const amount = (Math.random() * 0.05 + 0.001).toFixed(4);
+  const entry = document.createElement("div");
+  entry.className = "supporter-card";
+  entry.textContent = `${randomName.slice(0, 6)}...${randomName.slice(-2)} tipped ${amount} ${randomCoin}`;
+  const container = document.getElementById("supporters");
+  container.prepend(entry);
+  if (container.children.length > 20) {
+    container.removeChild(container.lastChild);
+  }
+}
+
+function updateWalletData() {
+  fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd')
+    .then(res => res.json())
+    .then(data => {
+      const btcPrice = data.bitcoin.usd;
+      const ethPrice = data.ethereum.usd;
+
+      fetch(`https://blockchain.info/q/addressbalance/bc1qjtgfw6dythprkvmkps7dmfm7dkkhtgy76q02ep`)
+        .then(res => res.text())
+        .then(sats => {
+          const btc = parseInt(sats) / 1e8;
+          document.getElementById("btcBalance").textContent =
+            `${formatBalance(btc)} BTC ≈ $${(btc * btcPrice).toFixed(2)}`;
+        });
+
+      fetch(`https://api.etherscan.io/api?module=account&action=balance&address=0xb96e27d05fe60a24a01a7672e7d3effc3bdb3d7e&tag=latest&apikey=YourApiKey`)
+        .then(res => res.json())
+        .then(data => {
+          const eth = parseInt(data.result) / 1e18;
+          document.getElementById("ethBalance").textContent =
+            `${formatBalance(eth)} ETH ≈ $${(eth * ethPrice).toFixed(2)}`;
+        });
+    });
+}
+
+updateWalletData();
+setInterval(updateWalletData, 60000);
+
+// Simulate new supporters every 5 seconds
+setInterval(addFakeSupporter, 5000);
+</script>
 
 </body>
 </html>
